@@ -3,7 +3,6 @@ package com.tiamosu.lunar.app
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.tiamosu.lunar.Lunar
 import com.tiamosu.lunar.Solar
 
 class MainActivity : AppCompatActivity() {
@@ -14,7 +13,9 @@ class MainActivity : AppCompatActivity() {
         val solar = Solar()
         Log.e("xia", "solar:" + solar.toFullString())
 
-        val lunar = Lunar()
+        val lunar = solar.getLunar()
         Log.e("xia", "lunar:" + lunar.toFullString())
+
+        Log.e("xia", "dayGoodTime:" + lunar.getDayTimesAndTianShen())
     }
 }

@@ -24,6 +24,44 @@ class SolarWeek {
     /** 星期几作为一周的开始，1234560分别代表星期一至星期天  */
     private var start = 0
 
+    companion object {
+
+        /**
+         * 通过指定日期获取阳历周
+         *
+         * @param date 日期
+         * @param start 星期几作为一周的开始，1234560分别代表星期一至星期天
+         * @return 阳历周
+         */
+        fun fromDate(date: Date, start: Int): SolarWeek {
+            return SolarWeek(date, start)
+        }
+
+        /**
+         * 通过指定日历获取阳历周
+         *
+         * @param calendar 日历
+         * @param start 星期几作为一周的开始，1234560分别代表星期一至星期天
+         * @return 阳历周
+         */
+        fun fromCalendar(calendar: Calendar, start: Int): SolarWeek {
+            return SolarWeek(calendar, start)
+        }
+
+        /**
+         * 通过指定年月日获取阳历周
+         *
+         * @param year 年
+         * @param month 月，1到12
+         * @param day 日，1到31
+         * @param start 星期几作为一周的开始，1234560分别代表星期一至星期天
+         * @return 阳历周
+         */
+        fun fromYmd(year: Int, month: Int, day: Int, start: Int): SolarWeek {
+            return SolarWeek(year, month, day, start)
+        }
+    }
+
     /**
      * 默认当月
      * @param start 星期几作为一周的开始，1234560分别代表星期一至星期天
@@ -67,41 +105,6 @@ class SolarWeek {
         this.month = month
         this.day = day
         this.start = start
-    }
-
-    /**
-     * 通过指定日期获取阳历周
-     *
-     * @param date 日期
-     * @param start 星期几作为一周的开始，1234560分别代表星期一至星期天
-     * @return 阳历周
-     */
-    fun fromDate(date: Date, start: Int): SolarWeek {
-        return SolarWeek(date, start)
-    }
-
-    /**
-     * 通过指定日历获取阳历周
-     *
-     * @param calendar 日历
-     * @param start 星期几作为一周的开始，1234560分别代表星期一至星期天
-     * @return 阳历周
-     */
-    fun fromCalendar(calendar: Calendar, start: Int): SolarWeek {
-        return SolarWeek(calendar, start)
-    }
-
-    /**
-     * 通过指定年月日获取阳历周
-     *
-     * @param year 年
-     * @param month 月，1到12
-     * @param day 日，1到31
-     * @param start 星期几作为一周的开始，1234560分别代表星期一至星期天
-     * @return 阳历周
-     */
-    fun fromYmd(year: Int, month: Int, day: Int, start: Int): SolarWeek {
-        return SolarWeek(year, month, day, start)
     }
 
     /**

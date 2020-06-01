@@ -13,8 +13,41 @@ class SolarYear {
     /** 年  */
     private var year = 0
 
-    /** 一年的月数  */
-    val MONTH_COUNT = 12
+    companion object {
+
+        /** 一年的月数  */
+        const val MONTH_COUNT = 12
+
+        /**
+         * 通过指定日期获取阳历年
+         *
+         * @param date 日期
+         * @return 阳历年
+         */
+        fun fromDate(date: Date): SolarYear {
+            return SolarYear(date)
+        }
+
+        /**
+         * 通过指定日历获取阳历年
+         *
+         * @param calendar 日历
+         * @return 阳历年
+         */
+        fun fromCalendar(calendar: Calendar): SolarYear {
+            return SolarYear(calendar)
+        }
+
+        /**
+         * 通过指定年份获取阳历年
+         *
+         * @param year 年
+         * @return 阳历年
+         */
+        fun fromYear(year: Int): SolarYear {
+            return SolarYear(year)
+        }
+    }
 
     /**
      * 默认当年
@@ -44,36 +77,6 @@ class SolarYear {
      */
     constructor(year: Int) {
         this.year = year
-    }
-
-    /**
-     * 通过指定日期获取阳历年
-     *
-     * @param date 日期
-     * @return 阳历年
-     */
-    fun fromDate(date: Date): SolarYear {
-        return SolarYear(date)
-    }
-
-    /**
-     * 通过指定日历获取阳历年
-     *
-     * @param calendar 日历
-     * @return 阳历年
-     */
-    fun fromCalendar(calendar: Calendar): SolarYear {
-        return SolarYear(calendar)
-    }
-
-    /**
-     * 通过指定年份获取阳历年
-     *
-     * @param year 年
-     * @return 阳历年
-     */
-    fun fromYear(year: Int): SolarYear {
-        return SolarYear(year)
     }
 
     /**

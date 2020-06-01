@@ -17,8 +17,42 @@ class SolarHalfYear {
     /** 月  */
     private var month = 0
 
-    /** 半年的月数  */
-    val MONTH_COUNT = 6
+    companion object {
+
+        /** 半年的月数  */
+        const val MONTH_COUNT = 6
+
+        /**
+         * 通过指定日期获取阳历半年
+         *
+         * @param date 日期
+         * @return 阳历半年
+         */
+        fun fromDate(date: Date): SolarHalfYear {
+            return SolarHalfYear(date)
+        }
+
+        /**
+         * 通过指定日历获取阳历半年
+         *
+         * @param calendar 日历
+         * @return 阳历半年
+         */
+        fun fromCalendar(calendar: Calendar): SolarHalfYear {
+            return SolarHalfYear(calendar)
+        }
+
+        /**
+         * 通过指定年月获取阳历半年
+         *
+         * @param year 年
+         * @param month 月
+         * @return 阳历半年
+         */
+        fun fromYm(year: Int, month: Int): SolarHalfYear {
+            return SolarHalfYear(year, month)
+        }
+    }
 
     /**
      * 默认当月
@@ -52,37 +86,6 @@ class SolarHalfYear {
     constructor(year: Int, month: Int) {
         this.year = year
         this.month = month
-    }
-
-    /**
-     * 通过指定日期获取阳历半年
-     *
-     * @param date 日期
-     * @return 阳历半年
-     */
-    fun fromDate(date: Date): SolarHalfYear {
-        return SolarHalfYear(date)
-    }
-
-    /**
-     * 通过指定日历获取阳历半年
-     *
-     * @param calendar 日历
-     * @return 阳历半年
-     */
-    fun fromCalendar(calendar: Calendar): SolarHalfYear {
-        return SolarHalfYear(calendar)
-    }
-
-    /**
-     * 通过指定年月获取阳历半年
-     *
-     * @param year 年
-     * @param month 月
-     * @return 阳历半年
-     */
-    fun fromYm(year: Int, month: Int): SolarHalfYear {
-        return SolarHalfYear(year, month)
     }
 
     /**

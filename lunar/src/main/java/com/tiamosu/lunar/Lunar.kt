@@ -594,6 +594,53 @@ class Lunar {
     /** 24节气表（对应阳历的准确时刻）  */
     private val jieQi: MutableMap<String, Solar> = LinkedHashMap()
 
+    companion object {
+
+        /**
+         * 通过指定阳历日期获取农历
+         *
+         * @param date 阳历日期
+         * @return 农历
+         */
+        fun fromDate(date: Date): Lunar {
+            return Lunar(date)
+        }
+
+        /**
+         * 通过指定农历年月日获取农历
+         *
+         * @param lunarYear 年（农历）
+         * @param lunarMonth 月（农历），1到12，闰月为负，即闰2月=-2
+         * @param lunarDay 日（农历），1到31
+         * @return 农历
+         */
+        fun fromYmd(lunarYear: Int, lunarMonth: Int, lunarDay: Int): Lunar {
+            return Lunar(lunarYear, lunarMonth, lunarDay)
+        }
+
+        /**
+         * 通过指定农历年月日获取农历
+         *
+         * @param lunarYear 年（农历）
+         * @param lunarMonth 月（农历），1到12，闰月为负，即闰2月=-2
+         * @param lunarDay 日（农历），1到31
+         * @param hour 小时（阳历）
+         * @param minute 分钟（阳历）
+         * @param second 秒钟（阳历）
+         * @return 农历
+         */
+        fun fromYmdHms(
+            lunarYear: Int,
+            lunarMonth: Int,
+            lunarDay: Int,
+            hour: Int,
+            minute: Int,
+            second: Int
+        ): Lunar {
+            return Lunar(lunarYear, lunarMonth, lunarDay, hour, minute, second)
+        }
+    }
+
     /**
      * 默认使用当前日期初始化
      */
@@ -892,50 +939,6 @@ class Lunar {
         computeDay()
         computeTime()
         computeWeek()
-    }
-
-    /**
-     * 通过指定阳历日期获取农历
-     *
-     * @param date 阳历日期
-     * @return 农历
-     */
-    fun fromDate(date: Date): Lunar {
-        return Lunar(date)
-    }
-
-    /**
-     * 通过指定农历年月日获取农历
-     *
-     * @param lunarYear 年（农历）
-     * @param lunarMonth 月（农历），1到12，闰月为负，即闰2月=-2
-     * @param lunarDay 日（农历），1到31
-     * @return 农历
-     */
-    fun fromYmd(lunarYear: Int, lunarMonth: Int, lunarDay: Int): Lunar {
-        return Lunar(lunarYear, lunarMonth, lunarDay)
-    }
-
-    /**
-     * 通过指定农历年月日获取农历
-     *
-     * @param lunarYear 年（农历）
-     * @param lunarMonth 月（农历），1到12，闰月为负，即闰2月=-2
-     * @param lunarDay 日（农历），1到31
-     * @param hour 小时（阳历）
-     * @param minute 分钟（阳历）
-     * @param second 秒钟（阳历）
-     * @return 农历
-     */
-    fun fromYmdHms(
-        lunarYear: Int,
-        lunarMonth: Int,
-        lunarDay: Int,
-        hour: Int,
-        minute: Int,
-        second: Int
-    ): Lunar {
-        return Lunar(lunarYear, lunarMonth, lunarDay, hour, minute, second)
     }
 
     /**
@@ -1586,8 +1589,8 @@ class Lunar {
      * 获取喜神方位描述
      * @return 喜神方位描述，如东北
      */
-    fun getPositionXiDesc(): String? {
-        return LunarUtil.POSITION_DESC[getPositionXi()]
+    fun getPositionXiDesc(): String {
+        return LunarUtil.POSITION_DESC[getPositionXi()] ?: ""
     }
 
     /**
@@ -1602,8 +1605,8 @@ class Lunar {
      * 获取阳贵神方位描述
      * @return 阳贵神方位描述，如东北
      */
-    fun getPositionYangGuiDesc(): String? {
-        return LunarUtil.POSITION_DESC[getPositionYangGui()]
+    fun getPositionYangGuiDesc(): String {
+        return LunarUtil.POSITION_DESC[getPositionYangGui()] ?: ""
     }
 
     /**
@@ -1756,8 +1759,7 @@ class Lunar {
         for (ganZhi in baZi) {
             val zhi = ganZhi.substring(1)
             l.add(
-                LunarUtil.SHI_SHEN_ZHI[dayGan + zhi + LunarUtil.ZHI_HIDE_GAN[zhi]?.get(0)]
-                    ?: ""
+                LunarUtil.SHI_SHEN_ZHI[dayGan + zhi + LunarUtil.ZHI_HIDE_GAN[zhi]?.get(0)] ?: ""
             )
         }
         return l
@@ -2017,6 +2019,45 @@ class Lunar {
      */
     fun getJieQiTable(): Map<String, Solar> {
         return jieQi
+    }
+
+    /**
+     * 获取一天的十二个时辰，对应十二地支： getTimesAndTianShen()[0]
+     * 获取一天的十二时辰所对应的天神： getTimesAndTianShen()[1]
+     * 获取一天的十二时辰所对应的天神是黄道还是黑道： getTimesAndTianShen()[2]
+     * 获取一天的十二时辰所对应的天神吉凶： getTimesAndTianShen()[3]
+     */
+    fun getDayTimesAndTianShen(): List<List<String>> {
+        val timeInGanZhiList: MutableList<String> = mutableListOf()
+        val timeTianShenList: MutableList<String> = mutableListOf()
+        val timeTianShenTypeList: MutableList<String> = mutableListOf()
+        val timeTianShenLuckList: MutableList<String> = mutableListOf()
+
+        val dayZhi = getDayZhiExact()
+        val offset = LunarUtil.ZHI_TIAN_SHEN_OFFSET[dayZhi] ?: 0
+        for (i in 0..11) {
+            val timeZhiIndex = i
+            val timeGanIndex = (dayGanIndexExact % 5 * 2 + timeZhiIndex) % 10
+            val timeGan = LunarUtil.GAN[timeGanIndex + 1]
+            val timeZhi = LunarUtil.ZHI[timeZhiIndex + 1]
+            val timeInGanZhi = timeGan + timeZhi
+            timeInGanZhiList.add(timeInGanZhi)
+
+            val timeTianShen = LunarUtil.TIAN_SHEN[(timeZhiIndex + offset) % 12 + 1]
+            timeTianShenList.add(timeTianShen)
+
+            val timeTianShenType = LunarUtil.TIAN_SHEN_TYPE[timeTianShen] ?: ""
+            timeTianShenTypeList.add(timeTianShenType)
+
+            val timeTianShenLuck = LunarUtil.TIAN_SHEN_TYPE_LUCK[timeTianShenType] ?: ""
+            timeTianShenLuckList.add(timeTianShenLuck)
+        }
+        return arrayListOf(
+            timeInGanZhiList,
+            timeTianShenList,
+            timeTianShenTypeList,
+            timeTianShenLuckList
+        )
     }
 
     fun toFullString(): String {

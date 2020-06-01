@@ -12,6 +12,26 @@ import kotlin.math.floor
  * @date 2020/6/1.
  */
 class Solar {
+    /** 年  */
+    private var year = 0
+
+    /** 月  */
+    private var month = 0
+
+    /** 日  */
+    private var day = 0
+
+    /** 时  */
+    private var hour = 0
+
+    /** 分  */
+    private var minute = 0
+
+    /** 秒  */
+    private var second = 0
+
+    /** 日历  */
+    private var calendar: Calendar
 
     companion object {
         /** 2000年儒略日数(2000-1-1 12:00:00 UTC)  */
@@ -81,27 +101,6 @@ class Solar {
             return Solar(year, month, day, hour, minute, second)
         }
     }
-
-    /** 年  */
-    private var year = 0
-
-    /** 月  */
-    private var month = 0
-
-    /** 日  */
-    private var day = 0
-
-    /** 时  */
-    private var hour = 0
-
-    /** 分  */
-    private var minute = 0
-
-    /** 秒  */
-    private var second = 0
-
-    /** 日历  */
-    private var calendar: Calendar
 
     /**
      * 默认使用当前日期初始化
@@ -396,7 +395,7 @@ class Solar {
      * 获取农历
      * @return 农历
      */
-    fun getLunar(): Lunar? {
+    fun getLunar(): Lunar {
         return Lunar(calendar.time)
     }
 
@@ -439,7 +438,7 @@ class Solar {
      *
      * @return 日历
      */
-    fun getCalendar(): Calendar? {
+    fun getCalendar(): Calendar {
         return calendar
     }
 
@@ -466,6 +465,7 @@ class Solar {
         s.append(" ")
         s.append("星期")
         s.append(getWeekInChinese())
+
         for (f in getFestivals()) {
             s.append(" (")
             s.append(f)

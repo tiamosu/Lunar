@@ -17,8 +17,42 @@ class SolarSeason {
     /** 月  */
     private var month = 0
 
-    /** 一个季度的月数  */
-    val MONTH_COUNT = 3
+    companion object {
+
+        /** 一个季度的月数  */
+        const val MONTH_COUNT = 3
+
+        /**
+         * 通过指定日期获取阳历季度
+         *
+         * @param date 日期
+         * @return 阳历季度
+         */
+        fun fromDate(date: Date): SolarSeason {
+            return SolarSeason(date)
+        }
+
+        /**
+         * 通过指定日历获取阳历季度
+         *
+         * @param calendar 日历
+         * @return 阳历季度
+         */
+        fun fromCalendar(calendar: Calendar): SolarSeason {
+            return SolarSeason(calendar)
+        }
+
+        /**
+         * 通过指定年月获取阳历季度
+         *
+         * @param year 年
+         * @param month 月
+         * @return 阳历季度
+         */
+        fun fromYm(year: Int, month: Int): SolarSeason {
+            return SolarSeason(year, month)
+        }
+    }
 
     /**
      * 默认当月
@@ -52,37 +86,6 @@ class SolarSeason {
     constructor(year: Int, month: Int) {
         this.year = year
         this.month = month
-    }
-
-    /**
-     * 通过指定日期获取阳历季度
-     *
-     * @param date 日期
-     * @return 阳历季度
-     */
-    fun fromDate(date: Date): SolarSeason {
-        return SolarSeason(date)
-    }
-
-    /**
-     * 通过指定日历获取阳历季度
-     *
-     * @param calendar 日历
-     * @return 阳历季度
-     */
-    fun fromCalendar(calendar: Calendar): SolarSeason {
-        return SolarSeason(calendar)
-    }
-
-    /**
-     * 通过指定年月获取阳历季度
-     *
-     * @param year 年
-     * @param month 月
-     * @return 阳历季度
-     */
-    fun fromYm(year: Int, month: Int): SolarSeason {
-        return SolarSeason(year, month)
     }
 
     /**
