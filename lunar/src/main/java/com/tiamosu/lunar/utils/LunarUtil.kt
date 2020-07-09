@@ -2,7 +2,6 @@ package com.tiamosu.lunar.utils
 
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 import kotlin.math.abs
 
 /**
@@ -23,6 +22,9 @@ object LunarUtil {
 
     /** 农历与阳历年偏移量  */
     const val BASE_INDEX = 0
+
+    /** 基准对应的值年九星偏移量  */
+    const val BASE_YEAR_JIU_XING_INDEX = 0
 
     /** 基准对应的年干支偏移量  */
     const val BASE_YEAR_GANZHI_INDEX = -4
@@ -1136,6 +1138,41 @@ object LunarUtil {
         "三十"
     )
 
+    /** 月相，朔月也叫新月，望月也叫满月  */
+    val YUE_XIANG = arrayOf(
+        "",
+        "朔",
+        "既朔",
+        "蛾眉新",
+        "蛾眉新",
+        "蛾眉",
+        "夕月",
+        "上弦",
+        "上弦",
+        "九夜",
+        "宵",
+        "宵",
+        "宵",
+        "渐盈凸",
+        "小望",
+        "望",
+        "既望",
+        "立待",
+        "居待",
+        "寝待",
+        "更待",
+        "渐亏凸",
+        "下弦",
+        "下弦",
+        "有明",
+        "有明",
+        "蛾眉残",
+        "蛾眉残",
+        "残",
+        "晓",
+        "晦"
+    )
+
     /** 农历日期对应的节日  */
     val FESTIVAL: HashMap<String, String> = object : HashMap<String, String>() {
         init {
@@ -1470,6 +1507,7 @@ object LunarUtil {
             put("坤", "西南")
             put("兑", "正西")
             put("乾", "西北")
+            put("中", "中宫")
         }
     }
 
