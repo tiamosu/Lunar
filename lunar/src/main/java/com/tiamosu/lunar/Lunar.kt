@@ -1,7 +1,6 @@
 package com.tiamosu.lunar
 
 import com.tiamosu.lunar.utils.LunarUtil
-import com.tiamosu.lunar.utils.LunarUtil.getJiaZiIndex
 import com.tiamosu.lunar.utils.SolarUtil
 import java.util.*
 import kotlin.collections.ArrayList
@@ -16,7 +15,9 @@ import kotlin.math.sin
  * @author tiamosu
  * @date 2020/6/1.
  */
+@Suppress("PrivatePropertyName", "MemberVisibilityCanBePrivate", "unused")
 class Lunar {
+
     /** 1角度对应的弧度  */
     private val RAD_PER_DEGREE = Math.PI / 180
 
@@ -2084,7 +2085,7 @@ class Lunar {
         } else if (solarYmd >= chuShu && solarYmd < shuangJiang) {
             start = 3
         }
-        val ganZhiIndex = getJiaZiIndex(getDayInGanZhi()) % 9
+        val ganZhiIndex = LunarUtil.getJiaZiIndex(getDayInGanZhi()) % 9
         var index = if (asc) start + ganZhiIndex - 1 else start - ganZhiIndex - 1
         if (index > 8) {
             index -= 9

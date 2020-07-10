@@ -2,7 +2,6 @@ package com.tiamosu.lunar
 
 import com.tiamosu.lunar.utils.LunarUtil
 
-
 /**
  * 描述：九星
  * 玄空九星、奇门九星都来源于北斗九星，九数、七色、五行、后天八卦方位都是相通的
@@ -10,6 +9,7 @@ import com.tiamosu.lunar.utils.LunarUtil
  * @author tiamosu
  * @date 2020/7/9.
  */
+@Suppress("MemberVisibilityCanBePrivate", "PropertyName")
 class NineStar(
     /** 序号，0到8  */
     private val index: Int
