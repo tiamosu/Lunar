@@ -1,6 +1,7 @@
 package com.tiamosu.lunar
 
 import com.tiamosu.lunar.utils.LunarUtil
+import com.tiamosu.lunar.utils.LunarUtil.getJiaZiIndex
 import com.tiamosu.lunar.utils.SolarUtil
 import java.util.*
 import kotlin.collections.ArrayList
@@ -2022,11 +2023,102 @@ class Lunar {
     }
 
     /**
-     * 获取值年九星
+     * 获取值年九星（流年紫白星起例歌诀：年上吉星论甲子，逐年星逆中宫起；上中下作三元汇，一上四中七下兑。）
      * @return 值年九星
      */
     fun getYearNineStar(): NineStar {
         var index: Int = LunarUtil.BASE_YEAR_JIU_XING_INDEX - (year - LunarUtil.BASE_YEAR) % 9
+        if (index < 0) {
+            index += 9
+        }
+        return NineStar(index)
+    }
+
+    /**
+     * 获取值月九星（月紫白星歌诀：子午卯酉八白起，寅申巳亥二黑求，辰戌丑未五黄中。）
+     * @return 值月九星
+     */
+    fun getMonthNineStar(): NineStar {
+        var start = 2
+        val yearZhi = getYearZhi()
+        if ("子午卯酉".contains(yearZhi)) {
+            start = 8
+        } else if ("辰戌丑未".contains(yearZhi)) {
+            start = 5
+        }
+        // 寅月起，所以需要-2
+        val monthIndex = monthZhiIndex - 2
+        var index = start - monthIndex - 1
+        if (index < 0) {
+            index += 9
+        }
+        return NineStar(index)
+    }
+
+    /**
+     * 获取值日九星（日家紫白星歌诀：日家白法不难求，二十四气六宫周；冬至雨水及谷雨，阳顺一七四中游；夏至处暑霜降后，九三六星逆行求。）
+     * @return 值日九星
+     */
+    fun getDayNineStar(): NineStar? {
+        //顺逆
+        val solarYmd = solar.toYmd()
+        val yuShui = jieQi["雨水"]?.toYmd() ?: ""
+        val guYu = jieQi["谷雨"]?.toYmd() ?: ""
+        val xiaZhi = jieQi["夏至"]?.toYmd() ?: ""
+        val chuShu = jieQi["处暑"]?.toYmd() ?: ""
+        val shuangJiang = jieQi["霜降"]?.toYmd() ?: ""
+        val dongZhi = jieQi["冬至"]?.toYmd() ?: ""
+        var start = 6
+        var asc = false
+        if (solarYmd >= dongZhi && solarYmd < yuShui) {
+            asc = true
+            start = 1
+        } else if (solarYmd >= yuShui && solarYmd < guYu) {
+            asc = true
+            start = 7
+        } else if (solarYmd >= guYu && solarYmd < xiaZhi) {
+            asc = true
+            start = 4
+        } else if (solarYmd >= xiaZhi && solarYmd < chuShu) {
+            start = 9
+        } else if (solarYmd >= chuShu && solarYmd < shuangJiang) {
+            start = 3
+        }
+        val ganZhiIndex = getJiaZiIndex(getDayInGanZhi()) % 9
+        var index = if (asc) start + ganZhiIndex - 1 else start - ganZhiIndex - 1
+        if (index > 8) {
+            index -= 9
+        }
+        if (index < 0) {
+            index += 9
+        }
+        return NineStar(index)
+    }
+
+    /**
+     * 获取值时九星（时家紫白星歌诀：三元时白最为佳，冬至阳生顺莫差，孟日七宫仲一白，季日四绿发萌芽，每把时辰起甲子，本时星耀照光华，时星移入中宫去，顺飞八方逐细查。夏至阴生逆回首，孟归三碧季加六，仲在九宫时起甲，依然掌中逆轮跨。）
+     * @return 值时九星
+     */
+    fun getTimeNineStar(): NineStar? {
+        //顺逆
+        val solarYmd = solar.toYmd()
+        val dongZhi = jieQi["冬至"]?.toYmd() ?: ""
+        val xiaZhi = jieQi["夏至"]?.toYmd() ?: ""
+        var asc = false
+        if (solarYmd >= dongZhi && solarYmd < xiaZhi) {
+            asc = true
+        }
+        var start = if (asc) 7 else 3
+        val dayZhi = getDayZhi()
+        if ("子午卯酉".contains(dayZhi)) {
+            start = if (asc) 1 else 9
+        } else if ("辰戌丑未".contains(dayZhi)) {
+            start = if (asc) 4 else 6
+        }
+        var index = if (asc) start + timeZhiIndex - 1 else start - timeZhiIndex - 1
+        if (index > 8) {
+            index -= 9
+        }
         if (index < 0) {
             index += 9
         }

@@ -2274,7 +2274,7 @@ object LunarUtil {
      * @param ganZhi 干支
      * @return 甲子序号
      */
-    private fun getJiaZiIndex(ganZhi: String): Int {
+    fun getJiaZiIndex(ganZhi: String): Int {
         var i = 0
         val j: Int = JIA_ZI.size
         while (i < j) {
