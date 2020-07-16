@@ -3947,7 +3947,7 @@ class Lunar {
         }
         jieQi["DONG_ZHI"]?.apply {
             if (getYear() == solar.getYear() && getMonth() == solar.getMonth() && getDay() == solar.getDay()) {
-                "冬至"
+                return "冬至"
             }
         }
         return ""
