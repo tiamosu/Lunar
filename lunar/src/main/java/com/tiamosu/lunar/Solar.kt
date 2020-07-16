@@ -3,7 +3,7 @@ package com.tiamosu.lunar
 import com.tiamosu.lunar.utils.SolarUtil
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.math.floor
+import kotlin.math.roundToInt
 
 /**
  * 描述：阳历日期
@@ -182,54 +182,46 @@ class Solar {
      * @param julianDay 儒略日
      */
     constructor(julianDay: Double) {
-        var julianDay1 = julianDay
-        julianDay1 += 0.5
+        var d = (julianDay + 0.5).toInt()
+        var f = julianDay + 0.5 - d
 
-        // 日数的整数部份
-        var a = int2(julianDay1)
-        // 日数的小数部分
-        var f = julianDay1 - a
-        var jd: Double
-        if (a > 2299161) {
-            jd = int2((a - 1867216.25) / 36524.25)
-            a += 1 + jd - int2(jd / 4)
+        if (d >= 2299161) {
+            val c = ((d - 1867216.25) / 36524.25).toInt()
+            d += 1 + c - (c * 1.0 / 4).toInt()
         }
-        // 向前移4年零2个月
-        a += 1524.0
-        var y = int2((a - 122.1) / 365.25)
-        // 去除整年日数后余下日数
-        jd = a - int2(365.25 * y)
-        var m = int2(jd / 30.6001)
-        // 去除整月日数后余下日数
-        val d = int2(jd - int2(m * 30.6001))
-        y -= 4716.0
-        m--
-        if (m > 12) {
-            m -= 12.0
+        d += 1524
+        var year = ((d - 122.1) / 365.25).toInt()
+        d -= (365.25 * year).toInt()
+        var month = (d * 1.0 / 30.601).toInt()
+        d -= (30.601 * month).toInt()
+        val day = d
+        if (month > 13) {
+            month -= 13
+            year -= 4715
+        } else {
+            month -= 1
+            year -= 4716
         }
-        if (m <= 2) {
-            y++
-        }
-
-        // 日的小数转为时分秒
         f *= 24.0
-        val h = int2(f)
-        f -= h
-        f *= 60.0
-        val mi = int2(f)
-        f -= mi
-        f *= 60.0
-        val s = int2(f)
+        val hour = f.toInt()
 
-        calendar = Calendar.getInstance().apply {
-            set(y.toInt(), m.toInt() - 1, d.toInt(), h.toInt(), mi.toInt(), s.toInt())
-            year = get(Calendar.YEAR)
-            month = get(Calendar.MONTH) + 1
-            day = get(Calendar.DATE)
-            hour = get(Calendar.HOUR_OF_DAY)
-            minute = get(Calendar.MINUTE)
-            second = get(Calendar.SECOND)
-        }
+        f -= hour.toDouble()
+        f *= 60.0
+        val minute = f.toInt()
+
+        f -= minute.toDouble()
+        f *= 60.0
+        val second = f.roundToInt()
+
+        calendar = Calendar.getInstance()
+        calendar[year, month - 1, day, hour, minute] = second
+
+        this.year = year
+        this.month = month
+        this.day = day
+        this.hour = hour
+        this.minute = minute
+        this.second = second
     }
 
     /**
@@ -399,38 +391,28 @@ class Solar {
         return Lunar(calendar.time)
     }
 
-    private fun int2(v: Double): Double {
-        var v1 = v
-        v1 = floor(v1)
-        return if (v1 < 0) v1 + 1 else v1
-    }
-
     /**
      * 获取儒略日
      * @return 儒略日
      */
     fun getJulianDay(): Double {
-        var y = year.toDouble()
-        var m = month.toDouble()
-        var n = 0.0
+        var y = year
+        var m = month
+        val d = day + ((second * 1.0 / 60 + minute) / 60 + hour) / 24
+        var n = 0
+        var g = false
+        if (y * 372 + m * 31 + d.toInt() >= 588829) {
+            g = true
+        }
         if (m <= 2) {
-            m += 12.0
+            m += 12
             y--
         }
-
-        // 判断是否为UTC日1582*372+10*31+15
-        if (year * 372 + month * 31 + day >= 588829) {
-            n = int2(y / 100)
-            // 加百年闰
-            n = 2 - n + int2(n / 4)
+        if (g) {
+            n = (y * 1.0 / 100).toInt()
+            n = 2 - n + (n * 1.0 / 4).toInt()
         }
-
-        // 加上年引起的偏移日数
-        n += int2(365.2500001 * (y + 4716))
-        // 加上月引起的偏移日数及日偏移数
-        n += int2(30.6 * (m + 1)) + day
-        n += ((second * 1.0 / 60 + minute) / 60 + hour) / 24 - 1524.5
-        return n
+        return (365.25 * (y + 4716)).toInt() + (30.6001 * (m + 1)).toInt() + d + n - 1524.5
     }
 
     /**
