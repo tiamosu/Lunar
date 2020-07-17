@@ -18,7 +18,6 @@ import kotlin.math.sin
  */
 @Suppress("PrivatePropertyName", "MemberVisibilityCanBePrivate", "unused")
 class Lunar {
-
     /** 1弧度对应的角秒  */
     private val SECOND_PER_RAD = 180 * 3600 / Math.PI
 
@@ -3118,7 +3117,7 @@ class Lunar {
         val m = abs(lunarMonth)
         require(!(m < 1 || m > 12)) { "lunar month must between 1 and 12, or negative" }
         if (lunarMonth < 0) {
-            val leapMonth: Int = LunarUtil.getLeapMonth(lunarYear)
+            val leapMonth = LunarUtil.getLeapMonth(lunarYear)
             require(leapMonth != 0) {
                 String.format(
                     "no leap month in lunar year %d",
@@ -3134,7 +3133,7 @@ class Lunar {
             }
         }
         require(!(lunarDay < 1 || lunarDay > 30)) { "lunar day must between 1 and 30" }
-        val days: Int = LunarUtil.getDaysOfMonth(lunarYear, lunarMonth)
+        val days = LunarUtil.getDaysOfMonth(lunarYear, lunarMonth)
         require(lunarDay <= days) {
             String.format(
                 "only %d days in lunar year %d month %d",
@@ -3160,9 +3159,9 @@ class Lunar {
      */
     constructor(date: Date) {
         solar = Solar(date)
-        val y: Int = solar.getYear()
-        val m: Int = solar.getMonth()
-        val d: Int = solar.getDay()
+        val y = solar.getYear()
+        val m = solar.getMonth()
+        val d = solar.getDay()
         val startYear: Int
         val startMonth: Int
         val startDay: Int
@@ -3196,7 +3195,7 @@ class Lunar {
         }
         diff += d - startDay
         lunarDay += diff
-        var lastDate: Int = LunarUtil.getDaysOfMonth(lunarYear, lunarMonth)
+        var lastDate = LunarUtil.getDaysOfMonth(lunarYear, lunarMonth)
         while (lunarDay > lastDate) {
             lunarDay -= lastDate
             lunarMonth = LunarUtil.nextMonth(lunarYear, lunarMonth)
@@ -3220,7 +3219,7 @@ class Lunar {
         val t2 = t * t
         var dl = 0.0
         var i = 0
-        val j: Int = NUT_B.size
+        val j = NUT_B.size
         while (i < j) {
             a = if (i == 0) {
                 -1.742 * t
@@ -3306,8 +3305,9 @@ class Lunar {
     }
 
     private fun dtCalc(y: Double): Double {
-        val y0 = DT_AT[DT_AT.size - 2]
-        val t0 = DT_AT[DT_AT.size - 1]
+        val size = DT_AT.size
+        val y0 = DT_AT[size - 2]
+        val t0 = DT_AT[size - 1]
         if (y >= y0) {
             val jsd = 31.0
             if (y > y0 + 100) {
@@ -3318,7 +3318,7 @@ class Lunar {
             return v - dv * (y0 + 100 - y) / 100
         }
         var i = 0
-        while (i < DT_AT.size) {
+        while (i < size) {
             if (y < DT_AT[i + 5]) {
                 break
             }
@@ -3385,17 +3385,18 @@ class Lunar {
 
     private fun calcJieQi(jd: Double): Double {
         var jd = jd
+        val size = QI_KB.size
         var d = 0.0
         val pc = 7
         jd += 2451545.0
         val f1 = QI_KB[0] - pc
-        val f2 = QI_KB[QI_KB.size - 1] - pc
+        val f2 = QI_KB[size - 1] - pc
         val f3 = 2436935.0
         if (jd < f1 || jd >= f3) {
             d = floor(qiHigh(floor((jd + pc - 2451259) * 24.0 / 365.2422) * Math.PI / 12) + 0.5)
         } else if (jd >= f1 && jd < f2) {
             var i = 0
-            while (i < QI_KB.size) {
+            while (i < size) {
                 if (jd + pc < QI_KB[i + 2]) {
                     break
                 }
@@ -3447,10 +3448,10 @@ class Lunar {
         if (calcJieQi(w) > jd) {
             w -= 365.2422
         }
-        val size: Int = JIE_QI.size
+        val size = JIE_QI.size
         for (i in 0 until size) {
             val q = calcJieQi(w + 15.2184 * i)
-            jieQi[JIE_QI[(i + size) % size]] = Solar.fromJulianDay(qiAccurate2(q) + Solar.J2000)
+            jieQi[JIE_QI[i]] = Solar.fromJulianDay(qiAccurate2(q) + Solar.J2000)
         }
         //追加下一农历年的冬至
         val q = calcJieQi(w + 15.2184 * size)
@@ -3557,15 +3558,14 @@ class Lunar {
      * 干支纪日计算
      */
     private fun computeDay() {
-        val addDays: Int = (dayOffset + LunarUtil.BASE_DAY_GANZHI_INDEX) % 60
+        val addDays = (dayOffset + LunarUtil.BASE_DAY_GANZHI_INDEX) % 60
         dayGanIndex = addDays % 10
         dayZhiIndex = addDays % 12
         var dayGanExact = dayGanIndex
         var dayZhiExact = dayZhiIndex
 
         // 晚子时（夜子/子夜）应算作第二天
-        val hm =
-            (if (hour < 10) "0" else "") + hour + ":" + (if (minute < 10) "0" else "") + minute
+        val hm = (if (hour < 10) "0" else "") + hour + ":" + (if (minute < 10) "0" else "") + minute
         if (hm >= "23:00" && hm <= "23:59") {
             dayGanExact++
             if (dayGanExact >= 10) {
@@ -3584,8 +3584,7 @@ class Lunar {
      * 干支纪时计算
      */
     private fun computeTime() {
-        val hm =
-            (if (hour < 10) "0" else "") + hour + ":" + (if (minute < 10) "0" else "") + minute
+        val hm = (if (hour < 10) "0" else "") + hour + ":" + (if (minute < 10) "0" else "") + minute
         timeZhiIndex = LunarUtil.getTimeZhiIndex(hm)
         timeGanIndex = (dayGanIndexExact % 5 * 2 + timeZhiIndex) % 10
     }
@@ -3924,9 +3923,10 @@ class Lunar {
      */
     fun getJie(): String {
         for (jie in LunarUtil.JIE) {
-            val d = jieQi[jie]
-            if (d?.getYear() == solar.getYear() && d.getMonth() == solar.getMonth() && d.getDay() == solar.getDay()) {
-                return jie
+            jieQi[jie]?.apply {
+                if (getYear() == solar.getYear() && getMonth() == solar.getMonth() && getDay() == solar.getDay()) {
+                    return jie
+                }
             }
         }
         return ""
@@ -4065,7 +4065,7 @@ class Lunar {
      * @return 阳历日期
      */
     private fun toSolar(): Solar {
-        val c: Calendar = Calendar.getInstance()
+        val c = Calendar.getInstance()
         c.set(
             SolarUtil.BASE_YEAR,
             SolarUtil.BASE_MONTH - 1,
@@ -4095,83 +4095,163 @@ class Lunar {
     }
 
     /**
-     * 获取喜神方位
+     * 获取日喜神方位
      * @return 喜神方位，如艮
      */
-    fun getPositionXi(): String {
+    fun getDayPositionXi(): String {
         return LunarUtil.POSITION_XI[dayGanIndex + 1]
     }
 
     /**
-     * 获取喜神方位描述
+     * 获取日喜神方位描述
      * @return 喜神方位描述，如东北
      */
-    fun getPositionXiDesc(): String {
-        return LunarUtil.POSITION_DESC[getPositionXi()] ?: ""
+    fun getDayPositionXiDesc(): String {
+        return LunarUtil.POSITION_DESC[getDayPositionXi()] ?: ""
     }
 
     /**
-     * 获取阳贵神方位
+     * 获取日阳贵神方位
      * @return 阳贵神方位，如艮
      */
-    fun getPositionYangGui(): String {
+    fun getDayPositionYangGui(): String {
         return LunarUtil.POSITION_YANG_GUI[dayGanIndex + 1]
     }
 
     /**
-     * 获取阳贵神方位描述
+     * 获取日阳贵神方位描述
      * @return 阳贵神方位描述，如东北
      */
-    fun getPositionYangGuiDesc(): String {
-        return LunarUtil.POSITION_DESC[getPositionYangGui()] ?: ""
+    fun getDayPositionYangGuiDesc(): String {
+        return LunarUtil.POSITION_DESC[getDayPositionYangGui()] ?: ""
     }
 
     /**
-     * 获取阴贵神方位
+     * 获取日阴贵神方位
      * @return 阴贵神方位，如艮
      */
-    fun getPositionYinGui(): String {
+    fun getDayPositionYinGui(): String {
         return LunarUtil.POSITION_YIN_GUI[dayGanIndex + 1]
     }
 
     /**
-     * 获取阴贵神方位描述
+     * 获取日阴贵神方位描述
      * @return 阴贵神方位描述，如东北
      */
-    fun getPositionYinGuiDesc(): String {
-        return LunarUtil.POSITION_DESC[getPositionYinGui()] ?: ""
+    fun getDayPositionYinGuiDesc(): String {
+        return LunarUtil.POSITION_DESC[getDayPositionYinGui()] ?: ""
     }
 
     /**
-     * 获取福神方位
+     * 获取日福神方位
      * @return 福神方位，如艮
      */
-    fun getPositionFu(): String {
+    fun getDayPositionFu(): String {
         return LunarUtil.POSITION_FU[dayGanIndex + 1]
     }
 
     /**
-     * 获取福神方位描述
+     * 获取日福神方位描述
      * @return 福神方位描述，如东北
      */
-    fun getPositionFuDesc(): String {
-        return LunarUtil.POSITION_DESC[getPositionFu()] ?: ""
+    fun getDayPositionFuDesc(): String {
+        return LunarUtil.POSITION_DESC[getDayPositionFu()] ?: ""
     }
 
     /**
-     * 获取财神方位
+     * 获取日财神方位
      * @return 财神方位，如艮
      */
-    fun getPositionCai(): String {
+    fun getDayPositionCai(): String {
         return LunarUtil.POSITION_CAI[dayGanIndex + 1]
     }
 
     /**
-     * 获取财神方位描述
+     * 获取日财神方位描述
      * @return 财神方位描述，如东北
      */
-    fun getPositionCaiDesc(): String {
-        return LunarUtil.POSITION_DESC[getPositionCai()] ?: ""
+    fun getDayPositionCaiDesc(): String {
+        return LunarUtil.POSITION_DESC[getDayPositionCai()] ?: ""
+    }
+
+    /**
+     * 获取时辰喜神方位
+     * @return 喜神方位，如艮
+     */
+    fun getTimePositionXi(): String {
+        return LunarUtil.POSITION_XI[timeGanIndex + 1]
+    }
+
+    /**
+     * 获取时辰喜神方位描述
+     * @return 喜神方位描述，如东北
+     */
+    fun getTimePositionXiDesc(): String {
+        return LunarUtil.POSITION_DESC[getTimePositionXi()] ?: ""
+    }
+
+    /**
+     * 获取时辰阳贵神方位
+     * @return 阳贵神方位，如艮
+     */
+    fun getTimePositionYangGui(): String {
+        return LunarUtil.POSITION_YANG_GUI[timeGanIndex + 1]
+    }
+
+    /**
+     * 获取时辰阳贵神方位描述
+     * @return 阳贵神方位描述，如东北
+     */
+    fun getTimePositionYangGuiDesc(): String {
+        return LunarUtil.POSITION_DESC[getTimePositionYangGui()] ?: ""
+    }
+
+    /**
+     * 获取时辰阴贵神方位
+     * @return 阴贵神方位，如艮
+     */
+    fun getTimePositionYinGui(): String {
+        return LunarUtil.POSITION_YIN_GUI[timeGanIndex + 1]
+    }
+
+    /**
+     * 获取时辰阴贵神方位描述
+     * @return 阴贵神方位描述，如东北
+     */
+    fun getTimePositionYinGuiDesc(): String {
+        return LunarUtil.POSITION_DESC[getTimePositionYinGui()] ?: ""
+    }
+
+    /**
+     * 获取时辰福神方位
+     * @return 福神方位，如艮
+     */
+    fun getTimePositionFu(): String {
+        return LunarUtil.POSITION_FU[timeGanIndex + 1]
+    }
+
+    /**
+     * 获取时辰福神方位描述
+     * @return 福神方位描述，如东北
+     */
+    fun getTimePositionFuDesc(): String {
+        return LunarUtil.POSITION_DESC[getTimePositionFu()] ?: ""
+    }
+
+    /**
+     * 获取时辰财神方位
+     * @return 财神方位，如艮
+     */
+    fun getTimePositionCai(): String {
+        return LunarUtil.POSITION_CAI[timeGanIndex + 1]
+    }
+
+    /**
+     * 获取时辰财神方位描述
+     * @return 财神方位描述，如东北
+     */
+    fun getTimePositionCaiDesc(): String {
+        return LunarUtil.POSITION_DESC[getTimePositionCai()] ?: ""
     }
 
     /**
@@ -4275,9 +4355,7 @@ class Lunar {
         val l: MutableList<String> = ArrayList(baZi.size)
         for (ganZhi in baZi) {
             val zhi = ganZhi.substring(1)
-            l.add(
-                LunarUtil.SHI_SHEN_ZHI[dayGan + zhi + LunarUtil.ZHI_HIDE_GAN[zhi]?.get(0)] ?: ""
-            )
+            l.add(LunarUtil.SHI_SHEN_ZHI[dayGan + zhi + LunarUtil.ZHI_HIDE_GAN[zhi]?.get(0)] ?: "")
         }
         return l
     }
@@ -4543,7 +4621,7 @@ class Lunar {
      * @return 值年九星
      */
     fun getYearNineStar(): NineStar {
-        var index: Int = LunarUtil.BASE_YEAR_JIU_XING_INDEX - (year - LunarUtil.BASE_YEAR) % 9
+        var index = LunarUtil.BASE_YEAR_JIU_XING_INDEX - (year - LunarUtil.BASE_YEAR) % 9
         if (index < 0) {
             index += 9
         }
@@ -4575,7 +4653,7 @@ class Lunar {
      * 获取值日九星（日家紫白星歌诀：日家白法不难求，二十四气六宫周；冬至雨水及谷雨，阳顺一七四中游；夏至处暑霜降后，九三六星逆行求。）
      * @return 值日九星
      */
-    fun getDayNineStar(): NineStar? {
+    fun getDayNineStar(): NineStar {
         //顺逆
         val solarYmd = solar.toYmd()
         val yuShui = jieQi["雨水"]?.toYmd() ?: ""
@@ -4615,7 +4693,7 @@ class Lunar {
      * 获取值时九星（时家紫白星歌诀：三元时白最为佳，冬至阳生顺莫差，孟日七宫仲一白，季日四绿发萌芽，每把时辰起甲子，本时星耀照光华，时星移入中宫去，顺飞八方逐细查。夏至阴生逆回首，孟归三碧季加六，仲在九宫时起甲，依然掌中逆轮跨。）
      * @return 值时九星
      */
-    fun getTimeNineStar(): NineStar? {
+    fun getTimeNineStar(): NineStar {
         //顺逆
         val solarYmd = solar.toYmd()
         val dongZhi = jieQi["冬至"]?.toYmd() ?: ""
@@ -4749,25 +4827,25 @@ class Lunar {
         s.append(" ")
         s.append(getPengZuZhi())
         s.append("] 喜神方位[")
-        s.append(getPositionXi())
+        s.append(getDayPositionXi())
         s.append("](")
-        s.append(getPositionXiDesc())
+        s.append(getDayPositionXiDesc())
         s.append(") 阳贵神方位[")
-        s.append(getPositionYangGui())
+        s.append(getDayPositionYangGui())
         s.append("](")
-        s.append(getPositionYangGuiDesc())
+        s.append(getDayPositionYangGuiDesc())
         s.append(") 阴贵神方位[")
-        s.append(getPositionYinGui())
+        s.append(getDayPositionYinGui())
         s.append("](")
-        s.append(getPositionYinGuiDesc())
+        s.append(getDayPositionYinGuiDesc())
         s.append(") 福神方位[")
-        s.append(getPositionFu())
+        s.append(getDayPositionFu())
         s.append("](")
-        s.append(getPositionFuDesc())
+        s.append(getDayPositionFuDesc())
         s.append(") 财神方位[")
-        s.append(getPositionCai())
+        s.append(getDayPositionCai())
         s.append("](")
-        s.append(getPositionCaiDesc())
+        s.append(getDayPositionCaiDesc())
         s.append(") 冲[")
         s.append(getDayChongDesc())
         s.append("] 煞[")
