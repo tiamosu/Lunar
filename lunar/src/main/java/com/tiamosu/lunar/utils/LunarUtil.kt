@@ -1232,7 +1232,7 @@ object LunarUtil {
             put("6-19", Collections.nCopies(1, "观世音菩萨成道日"))
             put("6-24", Collections.nCopies(1, "关帝诞"))
             put("7-7", Collections.nCopies(1, "魁星诞"))
-            put("7-13", Arrays.asList("长真谭真人诞", "大势至菩萨诞"))
+            put("7-13", listOf("长真谭真人诞", "大势至菩萨诞"))
             put("7-15", Collections.nCopies(1, "中元节"))
             put("7-18", Collections.nCopies(1, "西王母诞"))
             put("7-19", Collections.nCopies(1, "太岁诞"))
@@ -2131,19 +2131,21 @@ object LunarUtil {
      * @return 距离天数
      */
     fun computeAddDays(year: Int, month: Int, day: Int): Int {
+        if (BASE_YEAR == year && BASE_MONTH == month) {
+            return day - BASE_DAY
+        }
         var y = BASE_YEAR
         var m = BASE_MONTH
         var diff = getDaysOfMonth(y, m) - BASE_DAY
-        m = nextMonth(y, m)
-        while (true) {
-            diff += getDaysOfMonth(y, m)
+        while (y != year || m != month) {
             m = nextMonth(y, m)
             if (m == 1) {
                 y++
             }
-            if (y == year && m == month) {
-                diff += day
-                break
+            diff += if (y == year && m == month) {
+                day
+            } else {
+                getDaysOfMonth(y, m)
             }
         }
         return diff
@@ -2210,7 +2212,7 @@ object LunarUtil {
         } else {
             v = LUNAR_MONTH[2 * index + 1]
             v = v shr 4 and 0x0F
-            if (v != Math.abs(month)) {
+            if (v != abs(month)) {
                 d = 0
             } else {
                 d = 29

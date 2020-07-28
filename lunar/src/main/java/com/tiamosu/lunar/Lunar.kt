@@ -4360,6 +4360,53 @@ class Lunar {
         return l
     }
 
+    private fun getBaZiShiShenZhi(zhi: String): List<String> {
+        val baZi = getBaZi()
+        val dayGan = baZi[2].substring(0, 1)
+        val hideGan = LunarUtil.ZHI_HIDE_GAN[zhi] ?: return emptyList()
+        val l: MutableList<String> = ArrayList(hideGan.size)
+        for (gan in hideGan) {
+            l.add(LunarUtil.SHI_SHEN_ZHI[dayGan + zhi + gan] ?: "")
+        }
+        return l
+    }
+
+    /**
+     * 获取八字年支十神
+     * @return 八字年支十神
+     */
+    fun getBaZiShiShenYearZhi(): List<String> {
+        val baZi = getBaZi()
+        return getBaZiShiShenZhi(baZi[0].substring(1))
+    }
+
+    /**
+     * 获取八字月支十神
+     * @return 八字月支十神
+     */
+    fun getBaZiShiShenMonthZhi(): List<String> {
+        val baZi = getBaZi()
+        return getBaZiShiShenZhi(baZi[1].substring(1))
+    }
+
+    /**
+     * 获取八字日支十神
+     * @return 八字日支十神
+     */
+    fun getBaZiShiShenDayZhi(): List<String> {
+        val baZi = getBaZi()
+        return getBaZiShiShenZhi(baZi[2].substring(1))
+    }
+
+    /**
+     * 获取八字时支十神
+     * @return 八字时支十神
+     */
+    fun getBaZiShiShenTimeZhi(): List<String> {
+        val baZi = getBaZi()
+        return getBaZiShiShenZhi(baZi[3].substring(1))
+    }
+
     /**
      * 获取十二执星：建、除、满、平、定、执、破、危、成、收、开、闭。当月支与日支相同即为建，依次类推
      * @return 执星

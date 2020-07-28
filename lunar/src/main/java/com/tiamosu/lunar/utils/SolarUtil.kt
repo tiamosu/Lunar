@@ -76,7 +76,7 @@ object SolarUtil {
     val OTHER_FESTIVAL: HashMap<String, List<String>> = object : HashMap<String, List<String>>() {
         init {
             put("1-8", Collections.nCopies(1, "周恩来逝世纪念日"))
-            put("1-10", Collections.nCopies(1, "中国公安110宣传日"))
+            put("1-10", listOf("中国人民警察节", "中国公安110宣传日"))
             put("1-21", Collections.nCopies(1, "列宁逝世纪念日"))
             put("1-26", Collections.nCopies(1, "国际海关日"))
             put("2-2", Collections.nCopies(1, "世界湿地日"))

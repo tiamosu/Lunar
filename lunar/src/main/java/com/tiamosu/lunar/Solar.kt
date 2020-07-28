@@ -1,5 +1,7 @@
 package com.tiamosu.lunar
 
+import com.tiamosu.lunar.utils.LunarUtil
+import com.tiamosu.lunar.utils.LunarUtil.getJiaZiIndex
 import com.tiamosu.lunar.utils.SolarUtil
 import java.util.*
 import kotlin.collections.ArrayList
@@ -222,6 +224,95 @@ class Solar {
         this.hour = hour
         this.minute = minute
         this.second = second
+    }
+
+    /**
+     * 通过八字获取阳历列表
+     * @param yearGanZhi 年柱
+     * @param monthGanZhi 月柱
+     * @param dayGanZhi 日柱
+     * @param timeGanZhi 时柱
+     * @return 符合的阳历列表
+     */
+    fun fromBaZi(
+        yearGanZhi: String,
+        monthGanZhi: String,
+        dayGanZhi: String,
+        timeGanZhi: String
+    ): List<Solar> {
+        val l: MutableList<Solar> = ArrayList()
+        val today = Solar()
+        var lunar = today.getLunar()
+        var offsetYear = getJiaZiIndex(lunar.getYearInGanZhiExact()) - getJiaZiIndex(yearGanZhi)
+        if (offsetYear < 0) {
+            offsetYear += 60
+        }
+        var startYear = today.getYear() - offsetYear
+        var hour = 0
+        val timeZhi = timeGanZhi.substring(1)
+        var i = 0
+        val j = LunarUtil.ZHI.size
+        while (i < j) {
+            if (LunarUtil.ZHI[i] == timeZhi) {
+                hour = (i - 1) * 2
+            }
+            i++
+        }
+        while (startYear >= SolarUtil.BASE_YEAR - 1) {
+            var year = startYear - 1
+            var counter = 0
+            var month = 12
+            var day: Int
+            var found = false
+            while (counter < 15) {
+                if (year >= SolarUtil.BASE_YEAR) {
+                    day = 1
+                    if (year == SolarUtil.BASE_YEAR && month == SolarUtil.BASE_MONTH) {
+                        day = SolarUtil.BASE_DAY
+                    }
+                    val solar = Solar(year, month, day, hour, 0, 0)
+                    lunar = solar.getLunar()
+                    if (lunar.getYearInGanZhiExact() == yearGanZhi && lunar.getMonthInGanZhiExact() == monthGanZhi) {
+                        found = true
+                        break
+                    }
+                }
+                month++
+                if (month > 12) {
+                    month = 1
+                    year++
+                }
+                counter++
+            }
+            if (found) {
+                counter = 0
+                month--
+                if (month < 1) {
+                    month = 12
+                    year--
+                }
+                day = 1
+                if (year == SolarUtil.BASE_YEAR && month == SolarUtil.BASE_MONTH) {
+                    day = SolarUtil.BASE_DAY
+                }
+                var solar = Solar(year, month, day, hour, 0, 0)
+                while (counter < 61) {
+                    lunar = solar.getLunar()
+                    if (lunar.getYearInGanZhiExact() == yearGanZhi
+                        && lunar.getMonthInGanZhiExact() == monthGanZhi
+                        && lunar.getDayInGanZhiExact() == dayGanZhi
+                        && lunar.getTimeInGanZhi() == timeGanZhi
+                    ) {
+                        l.add(solar)
+                        break
+                    }
+                    solar = solar.next(1)
+                    counter++
+                }
+            }
+            startYear -= 60
+        }
+        return l
     }
 
     /**
