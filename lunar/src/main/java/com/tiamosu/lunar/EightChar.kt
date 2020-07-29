@@ -92,7 +92,7 @@ class EightChar(private var lunar: Lunar) {
         return LunarUtil.SHI_SHEN_GAN[getDayGan() + getYearGan()] ?: ""
     }
 
-    private fun getYearShiShenZhi(zhi: String): List<String> {
+    private fun getShiShenZhi(zhi: String): List<String> {
         val hideGan = LunarUtil.ZHI_HIDE_GAN[zhi] ?: emptyList()
         val l: MutableList<String> = ArrayList(hideGan.size)
         for (gan in hideGan) {
@@ -106,7 +106,7 @@ class EightChar(private var lunar: Lunar) {
      * @return 十神
      */
     fun getYearShiShenZhi(): List<String> {
-        return getYearShiShenZhi(getYearZhi())
+        return getShiShenZhi(getYearZhi())
     }
 
     private fun getDiShi(zhiIndex: Int): String {
@@ -190,7 +190,7 @@ class EightChar(private var lunar: Lunar) {
      * @return 十神
      */
     fun getMonthShiShenZhi(): List<String> {
-        return getYearShiShenZhi(getMonthZhi())
+        return getShiShenZhi(getMonthZhi())
     }
 
     /**
@@ -262,7 +262,7 @@ class EightChar(private var lunar: Lunar) {
      * @return 十神
      */
     fun getDayShiShenZhi(): List<String> {
-        return getYearShiShenZhi(getDayZhi())
+        return getShiShenZhi(getDayZhi())
     }
 
     /**
@@ -334,7 +334,7 @@ class EightChar(private var lunar: Lunar) {
      * @return 十神
      */
     fun getTimeShiShenZhi(): List<String> {
-        return getYearShiShenZhi(getTimeZhi())
+        return getShiShenZhi(getTimeZhi())
     }
 
     /**
@@ -351,11 +351,11 @@ class EightChar(private var lunar: Lunar) {
      */
     fun getTaiYuan(): String {
         var ganIndex = lunar.getMonthGanIndexExact() + 1
-        if (ganIndex > 10) {
+        if (ganIndex >= 10) {
             ganIndex -= 10
         }
         var zhiIndex = lunar.getMonthZhiIndexExact() + 3
-        if (zhiIndex > 12) {
+        if (zhiIndex >= 12) {
             zhiIndex -= 12
         }
         return LunarUtil.GAN[ganIndex + 1] + LunarUtil.ZHI[zhiIndex + 1]
