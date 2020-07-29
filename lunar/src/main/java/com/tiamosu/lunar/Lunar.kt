@@ -3028,6 +3028,9 @@ class Lunar {
     /** 阳历秒钟  */
     private var second = 0
 
+    /** 八字  */
+    val eightChar by lazy { EightChar(this) }
+
     /** 24节气表（对应阳历的准确时刻）  */
     private val jieQi: MutableMap<String, Solar> = LinkedHashMap()
 
@@ -3233,8 +3236,8 @@ class Lunar {
     }
 
     private fun eLon(t: Double, n: Int): Double {
-        var t = t
-        t /= 10.0
+        var t1 = t
+        t1 /= 10.0
         var v = 0.0
         var tn = 1.0
         var n1: Int
@@ -3251,7 +3254,7 @@ class Lunar {
             n0 = n2 - n1.toDouble()
             if (n0 == 0.0) {
                 i++
-                tn *= t
+                tn *= t1
                 continue
             }
             if (n < 0) {
@@ -3268,17 +3271,17 @@ class Lunar {
             c = 0.0
             var j = n1
             while (j < m) {
-                c += XL0[j] * cos(XL0[j + 1] + t * XL0[j + 2])
+                c += XL0[j] * cos(XL0[j + 1] + t1 * XL0[j + 2])
                 j += 3
             }
             v += c * tn
             i++
-            tn *= t
+            tn *= t1
         }
         v /= XL0[0]
-        val t2 = t * t
-        val t3 = t2 * t
-        v += (-0.0728 - 2.7702 * t - 1.1019 * t2 - 0.0996 * t3) / SECOND_PER_RAD
+        val t2 = t1 * t1
+        val t3 = t2 * t1
+        v += (-0.0728 - 2.7702 * t1 - 1.1019 * t2 - 0.0996 * t3) / SECOND_PER_RAD
         return v
     }
 
@@ -3384,33 +3387,33 @@ class Lunar {
     }
 
     private fun calcJieQi(jd: Double): Double {
-        var jd = jd
+        var jd1 = jd
         val size = QI_KB.size
         var d = 0.0
         val pc = 7
-        jd += 2451545.0
+        jd1 += 2451545.0
         val f1 = QI_KB[0] - pc
         val f2 = QI_KB[size - 1] - pc
         val f3 = 2436935.0
-        if (jd < f1 || jd >= f3) {
-            d = floor(qiHigh(floor((jd + pc - 2451259) * 24.0 / 365.2422) * Math.PI / 12) + 0.5)
-        } else if (jd >= f1 && jd < f2) {
+        if (jd1 < f1 || jd1 >= f3) {
+            d = floor(qiHigh(floor((jd1 + pc - 2451259) * 24.0 / 365.2422) * Math.PI / 12) + 0.5)
+        } else if (jd1 >= f1 && jd1 < f2) {
             var i = 0
             while (i < size) {
-                if (jd + pc < QI_KB[i + 2]) {
+                if (jd1 + pc < QI_KB[i + 2]) {
                     break
                 }
                 i += 2
             }
-            d = QI_KB[i] + QI_KB[i + 1] * floor((jd + pc - QI_KB[i]) / QI_KB[i + 1])
+            d = QI_KB[i] + QI_KB[i + 1] * floor((jd1 + pc - QI_KB[i]) / QI_KB[i + 1])
             d = floor(d + 0.5)
             if (d == 1683460.0) {
                 d++
             }
             d -= 2451545.0
-        } else if (jd >= f2 && jd < f3) {
-            d = floor(qiLow(floor((jd + pc - 2451259) * 24.0 / 365.2422) * Math.PI / 12) + 0.5)
-            val from = ((jd - f2) / 365.2422 * 24).toInt()
+        } else if (jd1 >= f2 && jd1 < f3) {
+            d = floor(qiLow(floor((jd1 + pc - 2451259) * 24.0 / 365.2422) * Math.PI / 12) + 0.5)
+            val from = ((jd1 - f2) / 365.2422 * 24).toInt()
             val n = QB.substring(from, from + 1)
             if ("1" == n) {
                 d += 1.0
@@ -4292,10 +4295,10 @@ class Lunar {
      */
     fun getBaZi(): List<String> {
         val l: MutableList<String> = ArrayList(4)
-        l.add(getYearInGanZhiExact())
-        l.add(getMonthInGanZhiExact())
-        l.add(getDayInGanZhiExact())
-        l.add(getTimeInGanZhi())
+        l.add(eightChar.getYear())
+        l.add(eightChar.getMonth())
+        l.add(eightChar.getDay())
+        l.add(eightChar.getTime())
         return l
     }
 
@@ -4304,13 +4307,11 @@ class Lunar {
      * @return 八字五行
      */
     fun getBaZiWuXing(): List<String> {
-        val baZi = getBaZi()
-        val l: MutableList<String> = ArrayList(baZi.size)
-        for (ganZhi in baZi) {
-            val gan = ganZhi.substring(0, 1)
-            val zhi = ganZhi.substring(1)
-            l.add(LunarUtil.WU_XING_GAN[gan] + LunarUtil.WU_XING_ZHI[zhi])
-        }
+        val l: MutableList<String> = ArrayList(4)
+        l.add(eightChar.getYearWuXing())
+        l.add(eightChar.getMonthWuXing())
+        l.add(eightChar.getDayWuXing())
+        l.add(eightChar.getTimeWuXing())
         return l
     }
 
@@ -4319,11 +4320,11 @@ class Lunar {
      * @return 八字纳音
      */
     fun getBaZiNaYin(): List<String> {
-        val baZi = getBaZi()
-        val l: MutableList<String> = ArrayList(baZi.size)
-        for (ganZhi in baZi) {
-            l.add(LunarUtil.NAYIN[ganZhi] ?: "")
-        }
+        val l: MutableList<String> = ArrayList(4)
+        l.add(eightChar.getYearNaYin())
+        l.add(eightChar.getMonthNaYin())
+        l.add(eightChar.getDayNaYin())
+        l.add(eightChar.getTimeNaYin())
         return l
     }
 
@@ -4332,16 +4333,11 @@ class Lunar {
      * @return 八字天干十神
      */
     fun getBaZiShiShenGan(): List<String> {
-        val baZi = getBaZi()
-        val yearGan = baZi[0].substring(0, 1)
-        val monthGan = baZi[1].substring(0, 1)
-        val dayGan = baZi[2].substring(0, 1)
-        val timeGan = baZi[3].substring(0, 1)
-        val l: MutableList<String> = ArrayList(baZi.size)
-        l.add(LunarUtil.SHI_SHEN_GAN[dayGan + yearGan] ?: "")
-        l.add(LunarUtil.SHI_SHEN_GAN[dayGan + monthGan] ?: "")
-        l.add("日主")
-        l.add(LunarUtil.SHI_SHEN_GAN[dayGan + timeGan] ?: "")
+        val l: MutableList<String> = ArrayList(4)
+        l.add(eightChar.getYearShiShenGan())
+        l.add(eightChar.getMonthShiShenGan())
+        l.add(eightChar.getDayShiShenGan())
+        l.add(eightChar.getTimeShiShenGan())
         return l
     }
 
@@ -4350,13 +4346,11 @@ class Lunar {
      * @return 八字地支十神
      */
     fun getBaZiShiShenZhi(): List<String> {
-        val baZi = getBaZi()
-        val dayGan = baZi[2].substring(0, 1)
-        val l: MutableList<String> = ArrayList(baZi.size)
-        for (ganZhi in baZi) {
-            val zhi = ganZhi.substring(1)
-            l.add(LunarUtil.SHI_SHEN_ZHI[dayGan + zhi + LunarUtil.ZHI_HIDE_GAN[zhi]?.get(0)] ?: "")
-        }
+        val l: MutableList<String> = ArrayList(4)
+        l.add(eightChar.getYearShiShenZhi()[0])
+        l.add(eightChar.getMonthShiShenZhi()[0])
+        l.add(eightChar.getDayShiShenZhi()[0])
+        l.add(eightChar.getTimeShiShenZhi()[0])
         return l
     }
 
@@ -4376,8 +4370,7 @@ class Lunar {
      * @return 八字年支十神
      */
     fun getBaZiShiShenYearZhi(): List<String> {
-        val baZi = getBaZi()
-        return getBaZiShiShenZhi(baZi[0].substring(1))
+        return eightChar.getYearShiShenZhi()
     }
 
     /**
@@ -4385,8 +4378,7 @@ class Lunar {
      * @return 八字月支十神
      */
     fun getBaZiShiShenMonthZhi(): List<String> {
-        val baZi = getBaZi()
-        return getBaZiShiShenZhi(baZi[1].substring(1))
+        return eightChar.getMonthShiShenZhi()
     }
 
     /**
@@ -4394,8 +4386,7 @@ class Lunar {
      * @return 八字日支十神
      */
     fun getBaZiShiShenDayZhi(): List<String> {
-        val baZi = getBaZi()
-        return getBaZiShiShenZhi(baZi[2].substring(1))
+        return eightChar.getDayShiShenZhi()
     }
 
     /**
@@ -4403,8 +4394,7 @@ class Lunar {
      * @return 八字时支十神
      */
     fun getBaZiShiShenTimeZhi(): List<String> {
-        val baZi = getBaZi()
-        return getBaZiShiShenZhi(baZi[3].substring(1))
+        return eightChar.getTimeShiShenZhi()
     }
 
     /**
@@ -4959,7 +4949,42 @@ class Lunar {
         return second
     }
 
+    /**
+     * 获取阳历
+     */
     fun getSolar(): Solar {
         return solar
+    }
+
+    internal fun getTimeGanIndex(): Int {
+        return timeGanIndex
+    }
+
+    internal fun getTimeZhiIndex(): Int {
+        return timeZhiIndex
+    }
+
+    internal fun getDayGanIndexExact(): Int {
+        return dayGanIndexExact
+    }
+
+    internal fun getDayZhiIndexExact(): Int {
+        return dayZhiIndexExact
+    }
+
+    internal fun getMonthGanIndexExact(): Int {
+        return monthGanIndexExact
+    }
+
+    internal fun getMonthZhiIndexExact(): Int {
+        return monthZhiIndexExact
+    }
+
+    internal fun getYearGanIndexExact(): Int {
+        return yearGanIndexExact
+    }
+
+    internal fun getYearZhiIndexExact(): Int {
+        return yearZhiIndexExact
     }
 }

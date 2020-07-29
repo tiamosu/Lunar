@@ -35,8 +35,8 @@ object HolidayUtil {
         return Holiday(day, name, work, target)
     }
 
-    private fun buildHolidayBackward(s: String?): Holiday {
-        val size = s!!.length
+    private fun buildHolidayBackward(s: String): Holiday {
+        val size = s.length
         val day = s.substring(size - 18, size - 10)
         val name = NAMES[s[size - 10] - ZERO]
         val work = s[size - 9] == ZERO

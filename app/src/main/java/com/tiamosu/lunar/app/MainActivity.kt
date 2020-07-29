@@ -17,5 +17,7 @@ class MainActivity : AppCompatActivity() {
         Log.e("xia", "lunar:" + lunar.toFullString())
 
         Log.e("xia", "dayGoodTime:" + lunar.getDayTimesAndTianShen())
+
+        Log.e("xia", "eightChar:" + lunar.eightChar)
     }
 }

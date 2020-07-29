@@ -95,7 +95,7 @@ class NineStar(
      * 获取方位
      * @return 方位
      */
-    fun getPosition(): String? {
+    fun getPosition(): String {
         return POSITION[index]
     }
 
@@ -103,15 +103,15 @@ class NineStar(
      * 获取方位描述
      * @return 方位描述
      */
-    fun getPositionDesc(): String? {
-        return LunarUtil.POSITION_DESC[getPosition()]
+    fun getPositionDesc(): String {
+        return LunarUtil.POSITION_DESC[getPosition()] ?: ""
     }
 
     /**
      * 获取玄空九星名称
      * @return 玄空九星名称
      */
-    fun getNameInXuanKong(): String? {
+    fun getNameInXuanKong(): String {
         return NAME_XUAN_KONG[index]
     }
 
@@ -127,7 +127,7 @@ class NineStar(
      * 获取奇门九星名称
      * @return 奇门九星名称
      */
-    fun getNameInQiMen(): String? {
+    fun getNameInQiMen(): String {
         return NAME_QI_MEN[index]
     }
 
@@ -135,7 +135,7 @@ class NineStar(
      * 获取太乙九神名称
      * @return 太乙九神名称
      */
-    fun getNameInTaiYi(): String? {
+    fun getNameInTaiYi(): String {
         return NAME_TAI_YI[index]
     }
 
@@ -143,7 +143,7 @@ class NineStar(
      * 获取奇门九星吉凶
      * @return 大吉/小吉/大凶/小凶
      */
-    fun getLuckInQiMen(): String? {
+    fun getLuckInQiMen(): String {
         return LUCK_QI_MEN[index]
     }
 
@@ -151,7 +151,7 @@ class NineStar(
      * 获取玄空九星吉凶
      * @return 吉/凶
      */
-    fun getLuckInXuanKong(): String? {
+    fun getLuckInXuanKong(): String {
         return LUCK_XUAN_KONG[index]
     }
 
@@ -159,7 +159,7 @@ class NineStar(
      * 获取奇门九星阴阳
      * @return 阴/阳
      */
-    fun getYinYangInQiMen(): String? {
+    fun getYinYangInQiMen(): String {
         return YIN_YANG_QI_MEN[index]
     }
 
@@ -167,7 +167,7 @@ class NineStar(
      * 获取太乙九神类型
      * @return 吉神/凶神/安神
      */
-    fun getTypeInTaiYi(): String? {
+    fun getTypeInTaiYi(): String {
         return TYPE_TAI_YI[index]
     }
 

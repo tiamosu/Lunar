@@ -61,7 +61,7 @@ class Holiday {
      * 设置日期
      * @param day 日期
      */
-    fun setDay(day: String?) {
+    fun setDay(day: String) {
         this.day = day
     }
 
@@ -77,7 +77,7 @@ class Holiday {
      * 设置名称
      * @param name 名称
      */
-    fun setName(name: String?) {
+    fun setName(name: String) {
         this.name = name
     }
 
@@ -109,7 +109,7 @@ class Holiday {
      * 设置关联的节日
      * @param target 节日
      */
-    fun setTarget(target: String?) {
+    fun setTarget(target: String) {
         this.target = target
     }
 
