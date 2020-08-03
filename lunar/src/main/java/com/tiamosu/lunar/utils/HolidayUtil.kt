@@ -16,8 +16,9 @@ object HolidayUtil {
     private const val ZERO = '0'
 
     /** 节假日名称（元旦0，春节1，清明2，劳动3，端午4，中秋5，国庆6，国庆中秋7，抗战胜利日8）  */
-    private val NAMES =
+    private val NAMES by lazy {
         arrayOf("元旦节", "春节", "清明节", "劳动节", "端午节", "中秋节", "国庆节", "国庆中秋", "抗战胜利日")
+    }
 
     /** 节假日数据，日期YYYYMMDD+名称下标+是否调休+对应节日YYYYMMDD  */
     private const val DATA =
