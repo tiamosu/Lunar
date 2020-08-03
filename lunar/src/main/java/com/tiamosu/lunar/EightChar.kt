@@ -17,19 +17,21 @@ class EightChar(private var lunar: Lunar) {
     val CHANG_SHENG = arrayOf("长生", "沐浴", "冠带", "临官", "帝旺", "衰", "病", "死", "墓", "绝", "胎", "养")
 
     /** 长生十二神日干偏移值，五阳干顺推，五阴干逆推  */
-    private val CHANG_SHENG_OFFSET = HashMap<String, Int>().apply {
-        //阳
-        put("甲", 11)
-        put("丙", 2)
-        put("戊", 2)
-        put("庚", 5)
-        put("壬", 8)
-        //阴
-        put("乙", 6)
-        put("丁", 9)
-        put("己", 9)
-        put("辛", 0)
-        put("癸", 3)
+    private val CHANG_SHENG_OFFSET by lazy {
+        hashMapOf(
+            //阳
+            "甲" to 11,
+            "丙" to 2,
+            "戊" to 2,
+            "庚" to 5,
+            "壬" to 8,
+            //阴
+            "乙" to 6,
+            "丁" to 9,
+            "己" to 9,
+            "辛" to 0,
+            "癸" to 3,
+        )
     }
 
     override fun toString(): String {
