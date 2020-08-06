@@ -4764,45 +4764,6 @@ class Lunar {
         return jieQi
     }
 
-    /**
-     * 获取一天的十二个时辰，对应十二地支： getTimesAndTianShen()[0]
-     * 获取一天的十二时辰所对应的天神： getTimesAndTianShen()[1]
-     * 获取一天的十二时辰所对应的天神是黄道还是黑道： getTimesAndTianShen()[2]
-     * 获取一天的十二时辰所对应的天神吉凶： getTimesAndTianShen()[3]
-     */
-    fun getDayTimesAndTianShen(): List<List<String>> {
-        val timeInGanZhiList: MutableList<String> = mutableListOf()
-        val timeTianShenList: MutableList<String> = mutableListOf()
-        val timeTianShenTypeList: MutableList<String> = mutableListOf()
-        val timeTianShenLuckList: MutableList<String> = mutableListOf()
-
-        val dayZhi = getDayZhiExact()
-        val offset = LunarUtil.ZHI_TIAN_SHEN_OFFSET[dayZhi] ?: 0
-        for (i in 0..11) {
-            val timeZhiIndex = i
-            val timeGanIndex = (dayGanIndexExact % 5 * 2 + timeZhiIndex) % 10
-            val timeGan = LunarUtil.GAN[timeGanIndex + 1]
-            val timeZhi = LunarUtil.ZHI[timeZhiIndex + 1]
-            val timeInGanZhi = timeGan + timeZhi
-            timeInGanZhiList.add(timeInGanZhi)
-
-            val timeTianShen = LunarUtil.TIAN_SHEN[(timeZhiIndex + offset) % 12 + 1]
-            timeTianShenList.add(timeTianShen)
-
-            val timeTianShenType = LunarUtil.TIAN_SHEN_TYPE[timeTianShen] ?: ""
-            timeTianShenTypeList.add(timeTianShenType)
-
-            val timeTianShenLuck = LunarUtil.TIAN_SHEN_TYPE_LUCK[timeTianShenType] ?: ""
-            timeTianShenLuckList.add(timeTianShenLuck)
-        }
-        return arrayListOf(
-            timeInGanZhiList,
-            timeTianShenList,
-            timeTianShenTypeList,
-            timeTianShenLuckList
-        )
-    }
-
     fun toFullString(): String {
         val s = StringBuilder()
         s.append(toString())
@@ -4956,35 +4917,35 @@ class Lunar {
         return solar
     }
 
-    internal fun getTimeGanIndex(): Int {
+    fun getTimeGanIndex(): Int {
         return timeGanIndex
     }
 
-    internal fun getTimeZhiIndex(): Int {
+    fun getTimeZhiIndex(): Int {
         return timeZhiIndex
     }
 
-    internal fun getDayGanIndexExact(): Int {
+    fun getDayGanIndexExact(): Int {
         return dayGanIndexExact
     }
 
-    internal fun getDayZhiIndexExact(): Int {
+    fun getDayZhiIndexExact(): Int {
         return dayZhiIndexExact
     }
 
-    internal fun getMonthGanIndexExact(): Int {
+    fun getMonthGanIndexExact(): Int {
         return monthGanIndexExact
     }
 
-    internal fun getMonthZhiIndexExact(): Int {
+    fun getMonthZhiIndexExact(): Int {
         return monthZhiIndexExact
     }
 
-    internal fun getYearGanIndexExact(): Int {
+    fun getYearGanIndexExact(): Int {
         return yearGanIndexExact
     }
 
-    internal fun getYearZhiIndexExact(): Int {
+    fun getYearZhiIndexExact(): Int {
         return yearZhiIndexExact
     }
 }
