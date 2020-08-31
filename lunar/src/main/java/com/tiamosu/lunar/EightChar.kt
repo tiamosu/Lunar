@@ -449,4 +449,18 @@ class EightChar(private var lunar: Lunar) {
     fun getShenGongNaYin(): String {
         return LunarUtil.NAYIN[getShenGong()] ?: ""
     }
+
+    fun getLunar(): Lunar {
+        return lunar
+    }
+
+    /**
+     * 获取运
+     *
+     * @param gender 性别：1男，0女
+     * @return 运
+     */
+    fun getYun(gender: Int): Yun {
+        return Yun(this, gender)
+    }
 }

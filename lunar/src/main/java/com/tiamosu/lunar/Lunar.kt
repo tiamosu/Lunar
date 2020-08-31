@@ -4764,6 +4764,88 @@ class Lunar {
         return jieQi
     }
 
+    /**
+     * 获取下一节（顺推的第一个节）
+     * @return 节气
+     */
+    fun getNextJie(): JieQi? {
+        return getNearJieQi(true, LunarUtil.JIE)
+    }
+
+    /**
+     * 获取上一节（逆推的第一个节）
+     * @return 节气
+     */
+    fun getPrevJie(): JieQi? {
+        return getNearJieQi(false, LunarUtil.JIE)
+    }
+
+    /**
+     * 获取下一节气（顺推的第一个节气）
+     * @return 节气
+     */
+    fun getNextJieQi(): JieQi? {
+        return getNearJieQi(true, null)
+    }
+
+    /**
+     * 获取上一节气（逆推的第一个节气）
+     * @return 节气
+     */
+    fun getPrevJieQi(): JieQi? {
+        return getNearJieQi(false, null)
+    }
+
+    /**
+     * 获取最近的节气，如果未找到匹配的，返回null
+     * @param forward 是否顺推，true为顺推，false为逆推
+     * @param conditions 过滤条件，如果设置过滤条件，仅返回匹配该名称的
+     * @return 节气
+     */
+    private fun getNearJieQi(forward: Boolean, conditions: Array<String>?): JieQi? {
+        var name: String? = null
+        var near: Solar? = null
+        val filters: Set<String> = HashSet()
+        if (null != conditions) {
+            Collections.addAll(filters.toHashSet(), conditions)
+        }
+        val filter = filters.isNotEmpty()
+        val today = solar.toYmdHms()
+        for (entry in jieQi.entries) {
+            var jq = entry.key
+            if ("DONG_ZHI" == jq) {
+                jq = "冬至"
+            }
+            if (filter) {
+                if (!filters.contains(jq)) {
+                    continue
+                }
+            }
+            val solar = entry.value
+            val day = solar.toYmdHms()
+            if (forward) {
+                if (day < today) {
+                    continue
+                }
+                if (null == near || day < near.toYmdHms()) {
+                    name = jq
+                    near = solar
+                }
+            } else {
+                if (day > today) {
+                    continue
+                }
+                if (null == near || day > near.toYmdHms()) {
+                    name = jq
+                    near = solar
+                }
+            }
+        }
+        return if (null == near) {
+            null
+        } else JieQi(name, near)
+    }
+
     fun toFullString(): String {
         val s = StringBuilder()
         s.append(toString())
