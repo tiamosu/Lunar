@@ -1,5 +1,7 @@
 package com.tiamosu.lunar.utils
 
+import android.annotation.SuppressLint
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.ceil
 
@@ -195,5 +197,47 @@ object SolarUtil {
         c.set(year, month - 1, 1)
         val week: Int = c.get(Calendar.DAY_OF_WEEK) - 1
         return ceil((days + week - start) * 1.0 / WEEK.size).toInt()
+    }
+
+    /**
+     * @param year 年
+     * @param month 月
+     * @param day 日
+     *
+     * @return 判断日期为一年中的第几天
+     */
+    fun getDayInYear(year: Int, month: Int, day: Int): Int {
+        val dayArr = intArrayOf(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31) //定义每一年的天数
+        if (year <= 0 || month <= 0 || month > 12 || day <= 0 || day > dayArr[month - 1]) return -1
+        if (year % 4 == 0 && year % 100 != 0 || year % 400 == 0) { //如果是闰年，则2月为29天
+            dayArr[1] = 29
+        }
+        var sum = 0
+        for (i in 0 until month - 1) { //前几个月的天数之和+这个月的日期天数
+            sum += dayArr[i]
+        }
+        return sum + day
+    }
+
+    /**
+     * @param year 年
+     * @param month 月
+     * @param day 日
+     * @param firstDayOfWeek 周起始，默认为周日
+     *
+     * @return 判断日期为一年中的第几周
+     */
+    @SuppressLint("SimpleDateFormat")
+    fun getWeekInYear(
+        year: Int, month: Int, day: Int,
+        firstDayOfWeek: Int = Calendar.SUNDAY
+    ): Int {
+        val date = SimpleDateFormat("yyyy-MM-dd")
+            .parse("$year-$month-$day") ?: return -1
+
+        return Calendar.getInstance().apply {
+            this.firstDayOfWeek = firstDayOfWeek
+            this.time = date
+        }.get(Calendar.WEEK_OF_YEAR)
     }
 }
