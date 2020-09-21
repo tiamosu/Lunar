@@ -3035,6 +3035,17 @@ class Lunar {
     private val jieQi: MutableMap<String, Solar> = LinkedHashMap()
 
     companion object {
+        /** 节气表头部追加农历上年末的节气名(节令：大雪)，以示区分  */
+        private const val JIE_QI_PREPEND = "DA_XUE"
+
+        /** 节气表尾部追加农历下年初的节气名(气令：冬至)，以示区分  */
+        private const val JIE_QI_APPEND = "DONG_ZHI"
+
+        /** 农历年初节气名(气令：冬至)  */
+        private const val JIE_QI_FIRST = "冬至"
+
+        /** 农历年末节气名(节令：大雪)  */
+        private const val JIE_QI_LAST = "大雪"
 
         /**
          * 通过指定阳历日期获取农历
@@ -3451,14 +3462,17 @@ class Lunar {
         if (calcJieQi(w) > jd) {
             w -= 365.2422
         }
+        //追加上一农历年末的大雪
+        var q = calcJieQi(w - 15.2184)
+        jieQi[JIE_QI_PREPEND] = Solar.fromJulianDay(qiAccurate2(q) + Solar.J2000)
         val size = JIE_QI.size
         for (i in 0 until size) {
-            val q = calcJieQi(w + 15.2184 * i)
+            q = calcJieQi(w + 15.2184 * i)
             jieQi[JIE_QI[i]] = Solar.fromJulianDay(qiAccurate2(q) + Solar.J2000)
         }
         //追加下一农历年的冬至
-        val q = calcJieQi(w + 15.2184 * size)
-        jieQi["DONG_ZHI"] = Solar.fromJulianDay(qiAccurate2(q) + Solar.J2000)
+        q = calcJieQi(w + 15.2184 * size)
+        jieQi[JIE_QI_APPEND] = Solar.fromJulianDay(qiAccurate2(q) + Solar.J2000)
     }
 
     /**
@@ -3912,17 +3926,14 @@ class Lunar {
     }
 
     /**
-     * 获取季节
-     * @return 农历季节
+     * @return 获取农历季节
      */
     fun getSeason(): String {
         return LunarUtil.SEASON[abs(month)]
     }
 
     /**
-     * 获取节
-     *
-     * @return 节
+     * @return 获取节令
      */
     fun getJie(): String {
         for (jie in LunarUtil.JIE) {
@@ -3932,13 +3943,17 @@ class Lunar {
                 }
             }
         }
+        // 追加的节令：大雪
+        jieQi[JIE_QI_PREPEND]?.apply {
+            if (getYear() == solar.getYear() && getMonth() == solar.getMonth() && getDay() == solar.getDay()) {
+                return JIE_QI_LAST
+            }
+        }
         return ""
     }
 
     /**
-     * 获取气
-     *
-     * @return 气
+     * @return 获取气令
      */
     fun getQi(): String {
         for (qi in LunarUtil.QI) {
@@ -3948,9 +3963,10 @@ class Lunar {
                 }
             }
         }
-        jieQi["DONG_ZHI"]?.apply {
+        // 追加的气令：冬至
+        jieQi[JIE_QI_APPEND]?.apply {
             if (getYear() == solar.getYear() && getMonth() == solar.getMonth() && getDay() == solar.getDay()) {
-                return "冬至"
+                return JIE_QI_FIRST
             }
         }
         return ""
@@ -4765,7 +4781,7 @@ class Lunar {
     }
 
     /**
-     * 获取下一节（顺推的第一个节）
+     * 获取下一节令（顺推的第一个节令）
      * @return 节气
      */
     fun getNextJie(): JieQi? {
@@ -4773,7 +4789,7 @@ class Lunar {
     }
 
     /**
-     * 获取上一节（逆推的第一个节）
+     * 获取上一节令（逆推的第一个节令）
      * @return 节气
      */
     fun getPrevJie(): JieQi? {
@@ -4813,8 +4829,11 @@ class Lunar {
         val today = solar.toYmdHms()
         for (entry in jieQi.entries) {
             var jq = entry.key
-            if ("DONG_ZHI" == jq) {
-                jq = "冬至"
+            if (JIE_QI_APPEND == jq) {
+                jq = JIE_QI_FIRST
+            }
+            if(JIE_QI_PREPEND == jq){
+                jq = JIE_QI_LAST
             }
             if (filter) {
                 if (!filters.contains(jq)) {
