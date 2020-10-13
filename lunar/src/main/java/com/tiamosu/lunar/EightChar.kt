@@ -14,7 +14,7 @@ class EightChar(private var lunar: Lunar) {
     private val MONTH_ZHI = arrayOf("", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥", "子", "丑")
 
     /** 长生十二神  */
-    val CHANG_SHENG = arrayOf("长生", "沐浴", "冠带", "临官", "帝旺", "衰", "病", "死", "墓", "绝", "胎", "养")
+    private val CHANG_SHENG = arrayOf("长生", "沐浴", "冠带", "临官", "帝旺", "衰", "病", "死", "墓", "绝", "胎", "养")
 
     /** 长生十二神日干偏移值，五阳干顺推，五阴干逆推  */
     private val CHANG_SHENG_OFFSET by lazy {

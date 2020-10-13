@@ -4797,6 +4797,22 @@ class Lunar {
     }
 
     /**
+     * 获取下一气令（顺推的第一个气令）
+     * @return 节气
+     */
+    fun getNextQi(): JieQi? {
+        return getNearJieQi(true, LunarUtil.QI)
+    }
+
+    /**
+     * 获取上一气令（逆推的第一个气令）
+     * @return 节气
+     */
+    fun getPrevQi(): JieQi? {
+        return getNearJieQi(false, LunarUtil.QI)
+    }
+
+    /**
      * 获取下一节气（顺推的第一个节气）
      * @return 节气
      */
@@ -4832,7 +4848,7 @@ class Lunar {
             if (JIE_QI_APPEND == jq) {
                 jq = JIE_QI_FIRST
             }
-            if(JIE_QI_PREPEND == jq){
+            if (JIE_QI_PREPEND == jq) {
                 jq = JIE_QI_LAST
             }
             if (filter) {
@@ -4863,6 +4879,53 @@ class Lunar {
         return if (null == near) {
             null
         } else JieQi(name, near)
+    }
+
+    /**
+     * 获取节气名称，如果无节气，返回空字符串
+     * @return 节气名称
+     */
+    fun getJieQi(): String {
+        var name = ""
+        for ((key, d) in jieQi) {
+            if (d.getYear() == solar.getYear() && d.getMonth() == solar.getMonth() && d.getDay() == solar.getDay()) {
+                name = key
+                break
+            }
+        }
+        if (JIE_QI_APPEND == name) {
+            name = JIE_QI_FIRST
+        } else if (JIE_QI_PREPEND == name) {
+            name = JIE_QI_LAST
+        }
+        return name
+    }
+
+    /**
+     * 获取当天节气对象，如果无节气，返回null
+     * @return 节气对象
+     */
+    fun getCurrentJieQi(): JieQi? {
+        val name = getJieQi()
+        return if (name.isNotEmpty()) JieQi(name, solar) else null
+    }
+
+    /**
+     * 获取当天节令对象，如果无节令，返回null
+     * @return 节气对象
+     */
+    fun getCurrentJie(): JieQi? {
+        val name = getJie()
+        return if (name.isNotEmpty()) JieQi(name, solar) else null
+    }
+
+    /**
+     * 获取当天气令对象，如果无气令，返回null
+     * @return 节气对象
+     */
+    fun getCurrentQi(): JieQi? {
+        val name = getQi()
+        return if (name.isNotEmpty()) JieQi(name, solar) else null
     }
 
     fun toFullString(): String {
@@ -4905,7 +4968,7 @@ class Lunar {
             s.append(f)
             s.append(")")
         }
-        val jq = getJie() + getQi()
+        val jq = getJieQi()
         if (jq.isNotEmpty()) {
             s.append(" [")
             s.append(jq)
