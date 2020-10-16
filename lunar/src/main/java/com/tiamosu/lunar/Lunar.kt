@@ -3050,6 +3050,18 @@ class Lunar {
         /** 农历年末节气名(节令：大雪)  */
         private const val JIE_QI_LAST = "大雪"
 
+        /** 节气表尾部追加阳历下年初的第一个节气名(节令：小寒)，以示区分  */
+        private const val JIE_APPEND_SOLAR_FIRST = "XIAO_HAN"
+
+        /** 节气表尾部追加阳历下年初的第二个节气名(气令：大寒)，以示区分  */
+        private const val QI_APPEND_SOLAR_SECOND = "DA_HAN"
+
+        /** 阳历下年初的第一个节气名(节令：小寒)  */
+        private const val JIE_SOLAR_FIRST = "小寒"
+
+        /** 阳历下年初的第二个节气名(气令：大寒)  */
+        private const val QI_SOLAR_SECOND = "大寒"
+
         /**
          * 通过指定阳历日期获取农历
          *
@@ -3468,14 +3480,24 @@ class Lunar {
         //追加上一农历年末的大雪
         var q = calcJieQi(w - 15.2184)
         jieQi[JIE_QI_PREPEND] = Solar.fromJulianDay(qiAccurate2(q) + Solar.J2000)
-        val size = JIE_QI.size
+        var size = JIE_QI.size
         for (i in 0 until size) {
             q = calcJieQi(w + 15.2184 * i)
             jieQi[JIE_QI[i]] = Solar.fromJulianDay(qiAccurate2(q) + Solar.J2000)
         }
-        //追加下一农历年的冬至
+        //追加下一农历年初的冬至
         q = calcJieQi(w + 15.2184 * size)
         jieQi[JIE_QI_APPEND] = Solar.fromJulianDay(qiAccurate2(q) + Solar.J2000)
+
+        //追加下一阳历年初的小寒
+        size++
+        q = calcJieQi(w + 15.2184 * size)
+        jieQi[JIE_APPEND_SOLAR_FIRST] = Solar.fromJulianDay(qiAccurate2(q) + Solar.J2000)
+
+        //追加下一阳历年初的大寒
+        size++
+        q = calcJieQi(w + 15.2184 * size)
+        jieQi[QI_APPEND_SOLAR_SECOND] = Solar.fromJulianDay(qiAccurate2(q) + Solar.J2000)
     }
 
     /**
@@ -3977,6 +3999,12 @@ class Lunar {
                 return JIE_QI_LAST
             }
         }
+        // 追加的节令：小寒
+        jieQi[JIE_APPEND_SOLAR_FIRST]?.apply {
+            if (getYear() == solar.getYear() && getMonth() == solar.getMonth() && getDay() == solar.getDay()) {
+                return JIE_SOLAR_FIRST
+            }
+        }
         return ""
     }
 
@@ -3995,6 +4023,12 @@ class Lunar {
         jieQi[JIE_QI_APPEND]?.apply {
             if (getYear() == solar.getYear() && getMonth() == solar.getMonth() && getDay() == solar.getDay()) {
                 return JIE_QI_FIRST
+            }
+        }
+        // 追加的气令：大寒
+        jieQi[QI_APPEND_SOLAR_SECOND]?.apply {
+            if (getYear() == solar.getYear() && getMonth() == solar.getMonth() && getDay() == solar.getDay()) {
+                return QI_SOLAR_SECOND
             }
         }
         return ""
@@ -4879,6 +4913,12 @@ class Lunar {
             if (JIE_QI_PREPEND == jq) {
                 jq = JIE_QI_LAST
             }
+            if (JIE_APPEND_SOLAR_FIRST == jq) {
+                jq = JIE_SOLAR_FIRST
+            }
+            if (QI_APPEND_SOLAR_SECOND == jq) {
+                jq = QI_SOLAR_SECOND
+            }
             if (filter) {
                 if (!filters.contains(jq)) {
                     continue
@@ -4921,10 +4961,11 @@ class Lunar {
                 break
             }
         }
-        if (JIE_QI_APPEND == name) {
-            name = JIE_QI_FIRST
-        } else if (JIE_QI_PREPEND == name) {
-            name = JIE_QI_LAST
+        when (name) {
+            JIE_QI_APPEND -> name = JIE_QI_FIRST
+            JIE_QI_PREPEND -> name = JIE_QI_LAST
+            JIE_APPEND_SOLAR_FIRST -> name = JIE_SOLAR_FIRST
+            QI_APPEND_SOLAR_SECOND -> name = QI_SOLAR_SECOND
         }
         return name
     }
