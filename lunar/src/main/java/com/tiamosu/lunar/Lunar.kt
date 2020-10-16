@@ -1,6 +1,8 @@
 package com.tiamosu.lunar
 
 import com.tiamosu.lunar.utils.LunarUtil
+import com.tiamosu.lunar.utils.LunarUtil.getDaysOfMonth
+import com.tiamosu.lunar.utils.LunarUtil.getLeapMonth
 import com.tiamosu.lunar.utils.SolarUtil
 import java.util.*
 import kotlin.collections.ArrayList
@@ -9,6 +11,7 @@ import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.floor
 import kotlin.math.sin
+
 
 /**
  * 描述：农历日期
@@ -3131,7 +3134,7 @@ class Lunar {
         val m = abs(lunarMonth)
         require(!(m < 1 || m > 12)) { "lunar month must between 1 and 12, or negative" }
         if (lunarMonth < 0) {
-            val leapMonth = LunarUtil.getLeapMonth(lunarYear)
+            val leapMonth = getLeapMonth(lunarYear)
             require(leapMonth != 0) {
                 String.format(
                     "no leap month in lunar year %d",
@@ -3147,7 +3150,7 @@ class Lunar {
             }
         }
         require(!(lunarDay < 1 || lunarDay > 30)) { "lunar day must between 1 and 30" }
-        val days = LunarUtil.getDaysOfMonth(lunarYear, lunarMonth)
+        val days = getDaysOfMonth(lunarYear, lunarMonth)
         require(lunarDay <= days) {
             String.format(
                 "only %d days in lunar year %d month %d",
@@ -3209,14 +3212,14 @@ class Lunar {
         }
         diff += d - startDay
         lunarDay += diff
-        var lastDate = LunarUtil.getDaysOfMonth(lunarYear, lunarMonth)
+        var lastDate = getDaysOfMonth(lunarYear, lunarMonth)
         while (lunarDay > lastDate) {
             lunarDay -= lastDate
             lunarMonth = LunarUtil.nextMonth(lunarYear, lunarMonth)
             if (lunarMonth == 1) {
                 lunarYear++
             }
-            lastDate = LunarUtil.getDaysOfMonth(lunarYear, lunarMonth)
+            lastDate = getDaysOfMonth(lunarYear, lunarMonth)
         }
         year = lunarYear
         month = lunarMonth
@@ -3479,6 +3482,7 @@ class Lunar {
      * 计算干支纪年
      */
     private fun computeYear() {
+        //以正月初一开始
         yearGanIndex = (year + LunarUtil.BASE_YEAR_GANZHI_INDEX) % 10
         yearZhiIndex = (year + LunarUtil.BASE_YEAR_GANZHI_INDEX) % 12
 
@@ -3489,31 +3493,55 @@ class Lunar {
         //精确的干支纪年，以立春交接时刻为准
         var gExact = yearGanIndex
         var zExact = yearZhiIndex
+
+        //获取立春的阳历时刻
+        val liChun = jieQi["立春"] ?: Solar()
+
+        //阳历和阴历年份相同代表正月初一及以后
         if (year == solar.getYear()) {
-            //获取立春的阳历时刻
-            val liChun = jieQi["立春"]
             //立春日期判断
-            if (solar.toYmd() < liChun?.toYmd() ?: "") {
+            if (solar.toYmd() < liChun.toYmd()) {
                 g--
-                if (g < 0) {
-                    g += 10
-                }
                 z--
-                if (z < 0) {
-                    z += 12
-                }
             }
             //立春交接时刻判断
-            if (solar.toYmdHms() < liChun?.toYmdHms() ?: "") {
+            if (solar.toYmdHms() < liChun.toYmdHms()) {
                 gExact--
-                if (gExact < 0) {
-                    gExact += 10
-                }
                 zExact--
-                if (zExact < 0) {
-                    zExact += 12
-                }
             }
+        } else {
+            if (solar.toYmd() >= liChun.toYmd()) {
+                g++
+                z++
+            }
+            if (solar.toYmdHms() >= liChun.toYmdHms()) {
+                gExact++
+                zExact++
+            }
+        }
+        if (g < 0) {
+            g += 10
+        }
+        if (g >= 10) {
+            g -= 10
+        }
+        if (z < 0) {
+            z += 12
+        }
+        if (z >= 12) {
+            z -= 12
+        }
+        if (gExact < 0) {
+            gExact += 10
+        }
+        if (gExact >= 10) {
+            gExact -= 10
+        }
+        if (zExact < 0) {
+            zExact += 12
+        }
+        if (zExact >= 12) {
+            zExact -= 12
         }
         yearGanIndexByLiChun = g
         yearZhiIndexByLiChun = z
@@ -4928,98 +4956,6 @@ class Lunar {
         return if (name.isNotEmpty()) JieQi(name, solar) else null
     }
 
-    fun toFullString(): String {
-        val s = StringBuilder()
-        s.append(toString())
-        s.append(" ")
-        s.append(getYearInGanZhi())
-        s.append("(")
-        s.append(getYearShengXiao())
-        s.append(")年 ")
-        s.append(getMonthInGanZhi())
-        s.append("(")
-        s.append(getMonthShengXiao())
-        s.append(")月 ")
-        s.append(getDayInGanZhi())
-        s.append("(")
-        s.append(getDayShengXiao())
-        s.append(")日 ")
-        s.append(getTimeZhi())
-        s.append("(")
-        s.append(getTimeShengXiao())
-        s.append(")时 纳音[")
-        s.append(getYearNaYin())
-        s.append(" ")
-        s.append(getMonthNaYin())
-        s.append(" ")
-        s.append(getDayNaYin())
-        s.append(" ")
-        s.append(getTimeNaYin())
-        s.append("] 星期")
-        s.append(getWeekInChinese())
-
-        for (f in getFestivals()) {
-            s.append(" (")
-            s.append(f)
-            s.append(")")
-        }
-        for (f in getOtherFestivals()) {
-            s.append(" (")
-            s.append(f)
-            s.append(")")
-        }
-        val jq = getJieQi()
-        if (jq.isNotEmpty()) {
-            s.append(" [")
-            s.append(jq)
-            s.append("]")
-        }
-        s.append(" ")
-        s.append(getGong())
-        s.append("方")
-        s.append(getShou())
-        s.append(" 星宿[")
-        s.append(getXiu())
-        s.append(getZheng())
-        s.append(getAnimal())
-        s.append("](")
-        s.append(getXiuLuck())
-        s.append(") 彭祖百忌[")
-        s.append(getPengZuGan())
-        s.append(" ")
-        s.append(getPengZuZhi())
-        s.append("] 喜神方位[")
-        s.append(getDayPositionXi())
-        s.append("](")
-        s.append(getDayPositionXiDesc())
-        s.append(") 阳贵神方位[")
-        s.append(getDayPositionYangGui())
-        s.append("](")
-        s.append(getDayPositionYangGuiDesc())
-        s.append(") 阴贵神方位[")
-        s.append(getDayPositionYinGui())
-        s.append("](")
-        s.append(getDayPositionYinGuiDesc())
-        s.append(") 福神方位[")
-        s.append(getDayPositionFu())
-        s.append("](")
-        s.append(getDayPositionFuDesc())
-        s.append(") 财神方位[")
-        s.append(getDayPositionCai())
-        s.append("](")
-        s.append(getDayPositionCaiDesc())
-        s.append(") 冲[")
-        s.append(getDayChongDesc())
-        s.append("] 煞[")
-        s.append(getDaySha())
-        s.append("]")
-        return s.toString()
-    }
-
-    override fun toString(): String {
-        return getYearInChinese() + "年" + getMonthInChinese() + "月" + getDayInChinese()
-    }
-
     /**
      * 获取年份
      *
@@ -5111,5 +5047,148 @@ class Lunar {
 
     fun getYearZhiIndexExact(): Int {
         return yearZhiIndexExact
+    }
+
+    /**
+     * 获取往后推几天的农历日期，如果要往前推，则天数用负数
+     * @param days 天数
+     * @return 农历日期
+     */
+    fun next(days: Int): Lunar {
+        var y = year
+        var m = month
+        var d = day
+        if (days > 0) {
+            var daysInMonth = getDaysOfMonth(y, m)
+            var rest = day + days
+            while (daysInMonth < rest) {
+                if (m > 0) {
+                    if (getLeapMonth(y) != m) {
+                        m++
+                    } else {
+                        m = -m
+                    }
+                } else {
+                    m = 1 - m
+                }
+                if (13 == m) {
+                    y++
+                    m = 1
+                }
+                rest -= daysInMonth
+                daysInMonth = getDaysOfMonth(y, m)
+            }
+            d = rest
+        } else if (days < 0) {
+            var daysInMonth = day
+            var rest = -days
+            while (daysInMonth <= rest) {
+                if (m > 0) {
+                    m--
+                    if (0 == m) {
+                        y--
+                        m = if (getLeapMonth(y) != 12) 12 else -12
+                    }
+                } else {
+                    m = -m
+                }
+                rest -= daysInMonth
+                daysInMonth = getDaysOfMonth(y, m)
+            }
+            d = daysInMonth - rest
+        }
+        return Lunar(y, m, d, hour, minute, second)
+    }
+
+    fun toFullString(): String {
+        val s = StringBuilder()
+        s.append(toString())
+        s.append(" ")
+        s.append(getYearInGanZhi())
+        s.append("(")
+        s.append(getYearShengXiao())
+        s.append(")年 ")
+        s.append(getMonthInGanZhi())
+        s.append("(")
+        s.append(getMonthShengXiao())
+        s.append(")月 ")
+        s.append(getDayInGanZhi())
+        s.append("(")
+        s.append(getDayShengXiao())
+        s.append(")日 ")
+        s.append(getTimeZhi())
+        s.append("(")
+        s.append(getTimeShengXiao())
+        s.append(")时 纳音[")
+        s.append(getYearNaYin())
+        s.append(" ")
+        s.append(getMonthNaYin())
+        s.append(" ")
+        s.append(getDayNaYin())
+        s.append(" ")
+        s.append(getTimeNaYin())
+        s.append("] 星期")
+        s.append(getWeekInChinese())
+
+        for (f in getFestivals()) {
+            s.append(" (")
+            s.append(f)
+            s.append(")")
+        }
+        for (f in getOtherFestivals()) {
+            s.append(" (")
+            s.append(f)
+            s.append(")")
+        }
+        val jq = getJieQi()
+        if (jq.isNotEmpty()) {
+            s.append(" [")
+            s.append(jq)
+            s.append("]")
+        }
+        s.append(" ")
+        s.append(getGong())
+        s.append("方")
+        s.append(getShou())
+        s.append(" 星宿[")
+        s.append(getXiu())
+        s.append(getZheng())
+        s.append(getAnimal())
+        s.append("](")
+        s.append(getXiuLuck())
+        s.append(") 彭祖百忌[")
+        s.append(getPengZuGan())
+        s.append(" ")
+        s.append(getPengZuZhi())
+        s.append("] 喜神方位[")
+        s.append(getDayPositionXi())
+        s.append("](")
+        s.append(getDayPositionXiDesc())
+        s.append(") 阳贵神方位[")
+        s.append(getDayPositionYangGui())
+        s.append("](")
+        s.append(getDayPositionYangGuiDesc())
+        s.append(") 阴贵神方位[")
+        s.append(getDayPositionYinGui())
+        s.append("](")
+        s.append(getDayPositionYinGuiDesc())
+        s.append(") 福神方位[")
+        s.append(getDayPositionFu())
+        s.append("](")
+        s.append(getDayPositionFuDesc())
+        s.append(") 财神方位[")
+        s.append(getDayPositionCai())
+        s.append("](")
+        s.append(getDayPositionCaiDesc())
+        s.append(") 冲[")
+        s.append(getDayChongDesc())
+        s.append("] 煞[")
+        s.append(getDaySha())
+        s.append("]")
+        return s.toString()
+    }
+
+    override fun toString(): String {
+        return getYearInChinese() + "年" + getMonthInChinese() + "月" + getDayInChinese()
     }
 }
