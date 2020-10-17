@@ -4756,9 +4756,12 @@ class Lunar {
             start = 5
         }
         // 寅月起，所以需要-2
-        val monthIndex = monthZhiIndex - 2
+        var monthIndex = monthZhiIndex - 2
+        if (monthIndex < 0) {
+            monthIndex += 12
+        }
         var index = start - monthIndex - 1
-        if (index < 0) {
+        while (index < 0) {
             index += 9
         }
         return NineStar(index)
