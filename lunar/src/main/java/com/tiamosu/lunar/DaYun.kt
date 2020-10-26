@@ -44,16 +44,17 @@ class DaYun(
     private var lunar = yun.getLunar()
 
     init {
+        val birthYear = lunar.getSolar().getYear()
         val year = yun.getStartSolar().getYear()
         if (index < 1) {
-            startYear = lunar.getSolar().getYear()
+            startYear = birthYear
             startAge = 1
             endYear = year - 1
-            endAge = yun.getStartYear()
+            endAge = year - birthYear
         } else {
             val add = (index - 1) * 10
             startYear = year + add
-            startAge = yun.getStartYear() + add + 1
+            startAge = startYear - birthYear + 1
             endYear = startYear + 9
             endAge = startAge + 9
         }
