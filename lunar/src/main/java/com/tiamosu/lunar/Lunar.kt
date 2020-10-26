@@ -3385,7 +3385,7 @@ class Lunar {
                 4.6261 + 1256.61517 * t
             ) + 2060.6 * cos(2.67823 + 628.307585 * t) * t - 994 - 834 * sin(2.1824 - 33.75705 * t)
         t -= (l / 10000000 - w) / 628.332 + (32 * (t + 1.8) * (t + 1.8) - 20) / 86400 / 36525
-        return t * 36525 + 8 / 24
+        return t * 36525 + 8.0 / 24
     }
 
     private fun saLonT2(w: Double): Double {
@@ -3404,10 +3404,10 @@ class Lunar {
 
     private fun qiHigh(w: Double): Double {
         var t = saLonT2(w) * 36525
-        t = t - dtT(t) + 8 / 24
+        t = t - dtT(t) + 8.0 / 24
         val v = (t + 0.5) % 1 * 86400
         if (v < 1200 || v > 86400 - 1200) {
-            t = saLonT(w) * 36525 - dtT(t) + 8 / 24
+            t = saLonT(w) * 36525 - dtT(t) + 8.0 / 24
         }
         return t
     }
@@ -3453,7 +3453,7 @@ class Lunar {
 
     private fun qiAccurate(w: Double): Double {
         val t = saLonT(w) * 36525
-        return t - dtT(t) + 8 * 1.0 / 24
+        return t - dtT(t) + 8.0 / 24
     }
 
     private fun qiAccurate2(jd: Double): Double {
