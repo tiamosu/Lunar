@@ -1,11 +1,14 @@
 package com.tiamosu.lunar
 
+import com.tiamosu.lunar.utils.HolidayUtil.getHoliday
 import com.tiamosu.lunar.utils.LunarUtil
 import com.tiamosu.lunar.utils.LunarUtil.getJiaZiIndex
 import com.tiamosu.lunar.utils.SolarUtil
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.math.abs
 import kotlin.math.roundToInt
+
 
 /**
  * 描述：阳历日期
@@ -555,15 +558,46 @@ class Solar {
         return s.toString()
     }
 
+    fun next(days: Int): Solar {
+        return next(days, false)
+    }
+
     /**
      * 获取往后推几天的阳历日期，如果要往前推，则天数用负数
      * @param days 天数
      * @return 阳历日期
      */
-    fun next(days: Int): Solar {
-        val c: Calendar = Calendar.getInstance()
+    fun next(days: Int, onlyWorkday: Boolean): Solar {
+        val c = Calendar.getInstance()
         c.set(year, month - 1, day, hour, minute, second)
-        c.add(Calendar.DATE, days)
+
+        if (0 != days) {
+            if (!onlyWorkday) {
+                c.add(Calendar.DATE, days)
+            } else {
+                var rest = abs(days)
+                val add = if (days < 1) -1 else 1
+                while (rest > 0) {
+                    c.add(Calendar.DATE, add)
+                    var work = true
+                    val holiday = getHoliday(
+                        c[Calendar.YEAR], c[Calendar.MONTH] + 1,
+                        c[Calendar.DAY_OF_MONTH]
+                    )
+                    if (null == holiday) {
+                        val week = c[Calendar.DAY_OF_WEEK]
+                        if (1 == week || 7 == week) {
+                            work = false
+                        }
+                    } else {
+                        work = holiday.isWork()
+                    }
+                    if (work) {
+                        rest--
+                    }
+                }
+            }
+        }
         return Solar(c)
     }
 }
