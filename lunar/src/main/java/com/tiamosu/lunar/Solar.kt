@@ -7,6 +7,7 @@ import com.tiamosu.lunar.utils.SolarUtil
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.math.abs
+import kotlin.math.ceil
 import kotlin.math.roundToInt
 
 /**
@@ -357,15 +358,10 @@ class Solar {
             l.add(f)
         }
         //计算几月第几个星期几对应的节日
-        //第几周
-        var weekInMonth: Int = calendar.get(Calendar.WEEK_OF_MONTH)
+        val weeks = ceil(day / 7.0).toInt()
         //星期几，0代表星期天
         val week = getWeek()
-        //星期天很奇葩，会多算一周，需要减掉
-        if (0 == week) {
-            weekInMonth--
-        }
-        f = SolarUtil.WEEK_FESTIVAL["$month-$weekInMonth-$week"]
+        f = SolarUtil.WEEK_FESTIVAL["$month-$weeks-$week"]
         if (null != f) {
             l.add(f)
         }

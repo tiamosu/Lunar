@@ -10,12 +10,21 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val solar = Solar()
+        var solar = Solar()
         Log.e("xia", "solar:" + solar.toFullString())
 
         val lunar = solar.getLunar()
         Log.e("xia", "lunar:" + lunar.toFullString())
 
         Log.e("xia", "eightChar:" + lunar.eightChar)
+
+        solar = Solar.fromYmd(2020, 6, 21)
+        Log.e("xia", "${solar.getFestivals()}")
+
+        solar = Solar.fromYmd(2020, 11, 26)
+        Log.e("xia", "${solar.getFestivals()}")
+
+        solar = Solar.fromYmd(2021, 5, 9)
+        Log.e("xia", "${solar.getFestivals()}")
     }
 }
