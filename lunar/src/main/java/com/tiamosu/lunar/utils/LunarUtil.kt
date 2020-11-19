@@ -473,6 +473,12 @@ object LunarUtil {
         )
     }
 
+    /** 旬  */
+    val XUN by lazy { arrayOf("甲子", "甲戌", "甲申", "甲午", "甲辰", "甲寅") }
+
+    /** 旬空  */
+    val XUN_KONG by lazy { arrayOf("戌亥", "申酉", "午未", "辰巳", "寅卯", "子丑") }
+
     /** 天干  */
     val GAN by lazy { arrayOf("", "甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸") }
 
@@ -3012,5 +3018,60 @@ object LunarUtil {
             l.add("无")
         }
         return l
+    }
+
+    /**
+     * 获取干支所在旬下标，0-5
+     * @param ganZhi 干支
+     * @return 旬下标，0-5
+     */
+    private fun getXunIndex(ganZhi: String): Int {
+        val gan = ganZhi.substring(0, 1)
+        val zhi = ganZhi.substring(1)
+        var ganIndex = 0
+        var zhiIndex = 0
+        run {
+            var i = 0
+            val j = GAN.size
+            while (i < j) {
+                if (GAN[i] == gan) {
+                    ganIndex = i
+                    break
+                }
+                i++
+            }
+        }
+        var i = 0
+        val j = ZHI.size
+        while (i < j) {
+            if (ZHI[i] == zhi) {
+                zhiIndex = i
+                break
+            }
+            i++
+        }
+        var diff = ganIndex - zhiIndex
+        if (diff < 0) {
+            diff += 12
+        }
+        return diff / 2
+    }
+
+    /**
+     * 获取干支所在旬
+     * @param ganZhi 干支
+     * @return 旬
+     */
+    fun getXun(ganZhi: String): String {
+        return XUN[getXunIndex(ganZhi)]
+    }
+
+    /**
+     * 获取干支所在旬对应的旬空(空亡)
+     * @param ganZhi 干支
+     * @return 旬空(空亡)
+     */
+    fun getXunKong(ganZhi: String): String {
+        return XUN_KONG[getXunIndex(ganZhi)]
     }
 }

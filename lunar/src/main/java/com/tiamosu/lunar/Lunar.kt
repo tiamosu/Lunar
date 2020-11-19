@@ -5144,6 +5144,134 @@ class Lunar {
         return Lunar(y, m, d, hour, minute, second)
     }
 
+    /**
+     * 获取年所在旬（以正月初一作为新年的开始）
+     * @return 旬
+     */
+    fun getYearXun(): String {
+        return LunarUtil.getXun(getYearInGanZhi())
+    }
+
+    /**
+     * 获取年所在旬（以立春当天作为新年的开始）
+     * @return 旬
+     */
+    fun getYearXunByLiChun(): String {
+        return LunarUtil.getXun(getYearInGanZhiByLiChun())
+    }
+
+    /**
+     * 获取年所在旬（以立春交接时刻作为新年的开始）
+     * @return 旬
+     */
+    fun getYearXunExact(): String {
+        return LunarUtil.getXun(getYearInGanZhiExact())
+    }
+
+    /**
+     * 获取值年空亡（以正月初一作为新年的开始）
+     * @return 空亡(旬空)
+     */
+    fun getYearXunKong(): String {
+        return LunarUtil.getXunKong(getYearInGanZhi())
+    }
+
+    /**
+     * 获取值年空亡（以立春当天作为新年的开始）
+     * @return 空亡(旬空)
+     */
+    fun getYearXunKongByLiChun(): String {
+        return LunarUtil.getXunKong(getYearInGanZhiByLiChun())
+    }
+
+    /**
+     * 获取值年空亡（以立春交接时刻作为新年的开始）
+     * @return 空亡(旬空)
+     */
+    fun getYearXunKongExact(): String {
+        return LunarUtil.getXunKong(getYearInGanZhiExact())
+    }
+
+    /**
+     * 获取月所在旬（以节交接当天起算）
+     * @return 旬
+     */
+    fun getMonthXun(): String {
+        return LunarUtil.getXun(getMonthInGanZhi())
+    }
+
+    /**
+     * 获取月所在旬（以节交接时刻起算）
+     * @return 旬
+     */
+    fun getMonthXunExact(): String {
+        return LunarUtil.getXun(getMonthInGanZhiExact())
+    }
+
+    /**
+     * 获取值月空亡（以节交接当天起算）
+     * @return 空亡(旬空)
+     */
+    fun getMonthXunKong(): String {
+        return LunarUtil.getXunKong(getMonthInGanZhi())
+    }
+
+    /**
+     * 获取值月空亡（以节交接时刻起算）
+     * @return 空亡(旬空)
+     */
+    fun getMonthXunKongExact(): String {
+        return LunarUtil.getXunKong(getMonthInGanZhiExact())
+    }
+
+    /**
+     * 获取日所在旬（以节交接当天起算）
+     * @return 旬
+     */
+    fun getDayXun(): String {
+        return LunarUtil.getXun(getDayInGanZhi())
+    }
+
+    /**
+     * 获取日所在旬（晚子时算第二天）
+     * @return 旬
+     */
+    fun getDayXunExact(): String {
+        return LunarUtil.getXun(getDayInGanZhiExact())
+    }
+
+    /**
+     * 获取值日空亡
+     * @return 空亡(旬空)
+     */
+    fun getDayXunKong(): String {
+        return LunarUtil.getXunKong(getDayInGanZhi())
+    }
+
+    /**
+     * 获取值日空亡（晚子时算第二天）
+     * @return 空亡(旬空)
+     */
+    fun getDayXunKongExact(): String {
+        return LunarUtil.getXunKong(getDayInGanZhiExact())
+    }
+
+    /**
+     * 获取时辰所在旬
+     * @return 旬
+     */
+    fun getTimeXun(): String {
+        return LunarUtil.getXun(getTimeInGanZhi())
+    }
+
+    /**
+     * 获取值时空亡
+     * @return 空亡(旬空)
+     */
+    fun getTimeXunKong(): String {
+        return LunarUtil.getXunKong(getTimeInGanZhi())
+    }
+
     fun toFullString(): String {
         val s = StringBuilder()
         s.append(toString())

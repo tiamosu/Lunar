@@ -3,6 +3,7 @@ package com.tiamosu.lunar
 import com.tiamosu.lunar.utils.LunarUtil
 import com.tiamosu.lunar.utils.LunarUtil.getJiaZiIndex
 
+
 /**
  * 描述：小运
  *
@@ -72,5 +73,21 @@ class XiaoYun(
         }
         offset %= size
         return LunarUtil.JIA_ZI[offset]
+    }
+
+    /**
+     * 获取所在旬
+     * @return 旬
+     */
+    fun getXun(): String {
+        return LunarUtil.getXun(getGanZhi())
+    }
+
+    /**
+     * 获取旬空(空亡)
+     * @return 旬空(空亡)
+     */
+    fun getXunKong(): String {
+        return LunarUtil.getXunKong(getGanZhi())
     }
 }

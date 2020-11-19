@@ -3,6 +3,7 @@ package com.tiamosu.lunar
 import com.tiamosu.lunar.utils.LunarUtil
 import com.tiamosu.lunar.utils.LunarUtil.getJiaZiIndex
 
+
 /**
  * 描述：流年
  *
@@ -64,12 +65,31 @@ class LiuNian(
         return LunarUtil.JIA_ZI[offset]
     }
 
-    fun getLiuYue(): Array<LiuYue?> {
-        val n = 12
-        val l = arrayOfNulls<LiuYue>(n)
-        for (i in 0 until n) {
-            l[i] = LiuYue(this, i)
+    /**
+     * 获取所在旬
+     * @return 旬
+     */
+    fun getXun(): String {
+        return LunarUtil.getXun(getGanZhi())
+    }
+
+    /**
+     * 获取旬空(空亡)
+     * @return 旬空(空亡)
+     */
+    fun getXunKong(): String {
+        return LunarUtil.getXunKong(getGanZhi())
+    }
+
+    /**
+     * 获取流月
+     * @return 流月
+     */
+    fun getLiuYue(): Array<LiuYue> {
+        val list = mutableListOf<LiuYue>()
+        for (i in 0 until 12) {
+            list.add(LiuYue(this, i))
         }
-        return l
+        return list.toTypedArray()
     }
 }

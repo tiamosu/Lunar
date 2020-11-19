@@ -14,7 +14,20 @@ class EightChar(private var lunar: Lunar) {
     private val MONTH_ZHI = arrayOf("", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥", "子", "丑")
 
     /** 长生十二神  */
-    private val CHANG_SHENG = arrayOf("长生", "沐浴", "冠带", "临官", "帝旺", "衰", "病", "死", "墓", "绝", "胎", "养")
+    private val CHANG_SHENG = arrayOf(
+        "长生",
+        "沐浴",
+        "冠带",
+        "临官",
+        "帝旺",
+        "衰",
+        "病",
+        "死",
+        "墓",
+        "绝",
+        "胎",
+        "养"
+    )
 
     /** 长生十二神日干偏移值，五阳干顺推，五阴干逆推  */
     private val CHANG_SHENG_OFFSET by lazy {
@@ -462,5 +475,69 @@ class EightChar(private var lunar: Lunar) {
      */
     fun getYun(gender: Int): Yun {
         return Yun(this, gender)
+    }
+
+    /**
+     * 获取年柱所在旬
+     * @return 旬
+     */
+    fun getYearXun(): String {
+        return lunar.getYearXunExact()
+    }
+
+    /**
+     * 获取年柱旬空(空亡)
+     * @return 旬空(空亡)
+     */
+    fun getYearXunKong(): String {
+        return lunar.getYearXunKongExact()
+    }
+
+    /**
+     * 获取月柱所在旬
+     * @return 旬
+     */
+    fun getMonthXun(): String {
+        return lunar.getMonthXunExact()
+    }
+
+    /**
+     * 获取月柱旬空(空亡)
+     * @return 旬空(空亡)
+     */
+    fun getMonthXunKong(): String {
+        return lunar.getMonthXunKongExact()
+    }
+
+    /**
+     * 获取日柱所在旬
+     * @return 旬
+     */
+    fun getDayXun(): String {
+        return lunar.getDayXunExact()
+    }
+
+    /**
+     * 获取日柱旬空(空亡)
+     * @return 旬空(空亡)
+     */
+    fun getDayXunKong(): String {
+        return lunar.getDayXunKongExact()
+    }
+
+    /**
+     * 获取时柱所在旬
+     * @return 旬
+     */
+    fun getTimeXun(): String {
+        return lunar.getTimeXun()
+    }
+
+    /**
+     * 获取时柱旬空(空亡)
+     * @return 旬空(空亡)
+     */
+    fun getTimeXunKong(): String {
+        return lunar.getTimeXunKong()
     }
 }

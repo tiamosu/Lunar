@@ -3,6 +3,7 @@ package com.tiamosu.lunar
 import com.tiamosu.lunar.utils.LunarUtil
 import com.tiamosu.lunar.utils.LunarUtil.getJiaZiIndex
 
+
 /**
  * 描述：大运
  *
@@ -137,5 +138,21 @@ class DaYun(
             l[i] = XiaoYun(this, i, yun.isForward())
         }
         return l
+    }
+
+    /**
+     * 获取所在旬
+     * @return 旬
+     */
+    fun getXun(): String {
+        return LunarUtil.getXun(getGanZhi())
+    }
+
+    /**
+     * 获取旬空(空亡)
+     * @return 旬空(空亡)
+     */
+    fun getXunKong(): String {
+        return LunarUtil.getXunKong(getGanZhi())
     }
 }

@@ -2,6 +2,7 @@ package com.tiamosu.lunar
 
 import com.tiamosu.lunar.utils.LunarUtil
 
+
 /**
  * 描述：流月
  *
@@ -59,5 +60,21 @@ class LiuYue(
         val gan = LunarUtil.GAN[(index + offset) % 10 + 1]
         val zhi = LunarUtil.ZHI[(index + LunarUtil.BASE_MONTH_ZHI_INDEX) % 12 + 1]
         return gan + zhi
+    }
+
+    /**
+     * 获取所在旬
+     * @return 旬
+     */
+    fun getXun(): String {
+        return LunarUtil.getXun(getGanZhi())
+    }
+
+    /**
+     * 获取旬空(空亡)
+     * @return 旬空(空亡)
+     */
+    fun getXunKong(): String {
+        return LunarUtil.getXunKong(getGanZhi())
     }
 }
