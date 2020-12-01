@@ -33,11 +33,11 @@ class EightChar(private var lunar: Lunar) {
     private val CHANG_SHENG_OFFSET by lazy {
         hashMapOf(
             //阳
-            "甲" to 11,
-            "丙" to 2,
-            "戊" to 2,
-            "庚" to 5,
-            "壬" to 8,
+            "甲" to 1,
+            "丙" to 10,
+            "戊" to 10,
+            "庚" to 7,
+            "壬" to 4,
             //阴
             "乙" to 6,
             "丁" to 9,
