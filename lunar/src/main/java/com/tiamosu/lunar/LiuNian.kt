@@ -57,7 +57,10 @@ class LiuNian(
      * @return 干支
      */
     fun getGanZhi(): String {
-        var offset = getJiaZiIndex(lunar.getYearInGanZhiExact()) + index
+        // 干支与出生日期和起运日期都没关系
+        var offset = getJiaZiIndex(
+            (lunar.getJieQiTable()["立春"] ?: Solar()).getLunar().getYearInGanZhiExact()
+        ) + index
         if (daYun.getIndex() > 0) {
             offset += daYun.getStartAge() - 1
         }
