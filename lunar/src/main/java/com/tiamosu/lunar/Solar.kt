@@ -230,7 +230,7 @@ class Solar {
     }
 
     /**
-     * 通过八字获取阳历列表
+     * 通过八字获取阳历列表（晚子时日柱按当天）
      * @param yearGanZhi 年柱
      * @param monthGanZhi 月柱
      * @param dayGanZhi 日柱
@@ -243,6 +243,25 @@ class Solar {
         dayGanZhi: String,
         timeGanZhi: String
     ): List<Solar> {
+        return fromBaZi(yearGanZhi, monthGanZhi, dayGanZhi, timeGanZhi, 2)
+    }
+
+    /**
+     * 通过八字获取阳历列表（晚子时日柱按当天）
+     * @param yearGanZhi 年柱
+     * @param monthGanZhi 月柱
+     * @param dayGanZhi 日柱
+     * @param timeGanZhi 时柱
+     * @return 符合的阳历列表
+     */
+    fun fromBaZi(
+        yearGanZhi: String,
+        monthGanZhi: String,
+        dayGanZhi: String,
+        timeGanZhi: String,
+        sect: Int
+    ): List<Solar> {
+        val newSect = if (1 == sect) 1 else 2
         val l: MutableList<Solar> = ArrayList()
         val today = Solar()
         var lunar = today.getLunar()
@@ -301,13 +320,15 @@ class Solar {
                 var solar = Solar(year, month, day, hour, 0, 0)
                 while (counter < 61) {
                     lunar = solar.getLunar()
+                    val dgz =
+                        if (2 == newSect) lunar.getDayInGanZhiExact2() else lunar.getDayInGanZhiExact()
                     if (lunar.getYearInGanZhiExact() == yearGanZhi
                         && lunar.getMonthInGanZhiExact() == monthGanZhi
-                        && lunar.getDayInGanZhiExact() == dayGanZhi
+                        && dgz == dayGanZhi
                         && lunar.getTimeInGanZhi() == timeGanZhi
                     ) {
-                        l.add(solar)
-                        break
+                        l.add(solar);
+                        break;
                     }
                     solar = solar.next(1)
                     counter++

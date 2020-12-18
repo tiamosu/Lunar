@@ -3,6 +3,7 @@ package com.tiamosu.lunar
 import com.tiamosu.lunar.utils.LunarUtil
 import com.tiamosu.lunar.utils.LunarUtil.getDaysOfMonth
 import com.tiamosu.lunar.utils.LunarUtil.getLeapMonth
+import com.tiamosu.lunar.utils.LunarUtil.getXunKong
 import com.tiamosu.lunar.utils.SolarUtil
 import java.util.*
 import kotlin.collections.ArrayList
@@ -11,6 +12,7 @@ import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.floor
 import kotlin.math.sin
+
 
 /**
  * 描述：农历日期
@@ -2982,11 +2984,17 @@ class Lunar {
     /** 日对应的地支下标，0-11  */
     private var dayZhiIndex = 0
 
-    /** 日对应的天干下标（最精确的，供八字用，晚子时算第二天），0-9  */
+    /** 日对应的天干下标（八字流派1，晚子时日柱算明天），0-9 */
     private var dayGanIndexExact = 0
 
-    /** 日对应的地支下标（最精确的，供八字用，晚子时算第二天），0-11  */
+    /** 日对应的地支下标（八字流派1，晚子时日柱算明天），0-11 */
     private var dayZhiIndexExact = 0
+
+    /** 日对应的天干下标（八字流派2，晚子时日柱算当天），0-9  */
+    private var dayGanIndexExact2 = 0
+
+    /** 日对应的地支下标（八字流派2，晚子时日柱算当天），0-11  */
+    private var dayZhiIndexExact2 = 0
 
     /** 月对应的天干下标（以节交接当天起算），0-9  */
     private var monthGanIndex = 0
@@ -3630,7 +3638,11 @@ class Lunar {
         var dayGanExact = dayGanIndex
         var dayZhiExact = dayZhiIndex
 
-        // 晚子时（夜子/子夜）应算作第二天
+        // 八字流派2，晚子时（夜子/子夜）日柱算当天
+        dayGanIndexExact2 = dayGanExact
+        dayZhiIndexExact2 = dayZhiExact
+
+        // 八字流派1，晚子时（夜子/子夜）日柱算明天
         val hm = (if (hour < 10) "0" else "") + hour + ":" + (if (minute < 10) "0" else "") + minute
         if (hm >= "23:00" && hm <= "23:59") {
             dayGanExact++
@@ -3817,12 +3829,21 @@ class Lunar {
     }
 
     /**
-     * 获取干支纪日（日柱，晚子时算第二天）
+     * 获取干支纪日（日柱，晚子时日柱算明天）
      *
      * @return 干支纪日（日柱），如己卯
      */
     fun getDayInGanZhiExact(): String {
         return getDayGanExact() + getDayZhiExact()
+    }
+
+    /**
+     * 获取干支纪日（日柱，晚子时日柱算当天）
+     *
+     * @return 干支纪日（日柱），如己卯
+     */
+    fun getDayInGanZhiExact2(): String {
+        return getDayGanExact2() + getDayZhiExact2()
     }
 
     /**
@@ -3835,12 +3856,21 @@ class Lunar {
     }
 
     /**
-     * 获取日天干（晚子时算第二天）
+     * 获取日天干（晚子时日柱算明天）
      *
      * @return 日天干，如甲
      */
     fun getDayGanExact(): String {
         return LunarUtil.GAN[dayGanIndexExact + 1]
+    }
+
+    /**
+     * 获取日天干（晚子时日柱算当天）
+     *
+     * @return 日天干，如甲
+     */
+    fun getDayGanExact2(): String {
+        return LunarUtil.GAN[dayGanIndexExact2 + 1]
     }
 
     /**
@@ -3853,12 +3883,21 @@ class Lunar {
     }
 
     /**
-     * 获取日地支（晚子时算第二天）
+     * 获取日地支（晚子时日柱算明天）
      *
      * @return 日地支，如卯
      */
     fun getDayZhiExact(): String {
         return LunarUtil.ZHI[dayZhiIndexExact + 1]
+    }
+
+    /**
+     * 获取日地支（晚子时日柱算当天）
+     *
+     * @return 日地支，如卯
+     */
+    fun getDayZhiExact2(): String {
+        return LunarUtil.ZHI[dayZhiIndexExact2 + 1]
     }
 
     /**
@@ -5072,8 +5111,16 @@ class Lunar {
         return dayGanIndexExact
     }
 
+    fun getDayGanIndexExact2(): Int {
+        return dayGanIndexExact2
+    }
+
     fun getDayZhiIndexExact(): Int {
         return dayZhiIndexExact
+    }
+
+    fun getDayZhiIndexExact2(): Int {
+        return dayZhiIndexExact2
     }
 
     fun getMonthGanIndexExact(): Int {
@@ -5232,11 +5279,19 @@ class Lunar {
     }
 
     /**
-     * 获取日所在旬（晚子时算第二天）
+     * 获取日所在旬（晚子时日柱算明天）
      * @return 旬
      */
     fun getDayXunExact(): String {
         return LunarUtil.getXun(getDayInGanZhiExact())
+    }
+
+    /**
+     * 获取日所在旬（晚子时日柱算当天）
+     * @return 旬
+     */
+    fun getDayXunExact2(): String {
+        return LunarUtil.getXun(getDayInGanZhiExact2())
     }
 
     /**
@@ -5248,11 +5303,19 @@ class Lunar {
     }
 
     /**
-     * 获取值日空亡（晚子时算第二天）
+     * 获取值日空亡（晚子时日柱算明天）
      * @return 空亡(旬空)
      */
     fun getDayXunKongExact(): String {
         return LunarUtil.getXunKong(getDayInGanZhiExact())
+    }
+
+    /**
+     * 获取值日空亡（晚子时日柱算当天）
+     * @return 空亡(旬空)
+     */
+    fun getDayXunKongExact2(): String {
+        return getXunKong(getDayInGanZhiExact2())
     }
 
     /**
