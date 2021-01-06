@@ -1,9 +1,6 @@
 package com.tiamosu.lunar
 
 import com.tiamosu.lunar.utils.LunarUtil
-import com.tiamosu.lunar.utils.LunarUtil.getDaysOfMonth
-import com.tiamosu.lunar.utils.LunarUtil.getLeapMonth
-import com.tiamosu.lunar.utils.LunarUtil.getXunKong
 import com.tiamosu.lunar.utils.SolarUtil
 import java.util.*
 import kotlin.collections.ArrayList
@@ -3153,7 +3150,7 @@ class Lunar {
         val m = abs(lunarMonth)
         require(!(m < 1 || m > 12)) { "lunar month must between 1 and 12, or negative" }
         if (lunarMonth < 0) {
-            val leapMonth = getLeapMonth(lunarYear)
+            val leapMonth = LunarUtil.getLeapMonth(lunarYear)
             require(leapMonth != 0) {
                 String.format(
                     "no leap month in lunar year %d",
@@ -3169,7 +3166,7 @@ class Lunar {
             }
         }
         require(!(lunarDay < 1 || lunarDay > 30)) { "lunar day must between 1 and 30" }
-        val days = getDaysOfMonth(lunarYear, lunarMonth)
+        val days = LunarUtil.getDaysOfMonth(lunarYear, lunarMonth)
         require(lunarDay <= days) {
             String.format(
                 "only %d days in lunar year %d month %d",
@@ -3231,14 +3228,14 @@ class Lunar {
         }
         diff += d - startDay
         lunarDay += diff
-        var lastDate = getDaysOfMonth(lunarYear, lunarMonth)
+        var lastDate = LunarUtil.getDaysOfMonth(lunarYear, lunarMonth)
         while (lunarDay > lastDate) {
             lunarDay -= lastDate
             lunarMonth = LunarUtil.nextMonth(lunarYear, lunarMonth)
             if (lunarMonth == 1) {
                 lunarYear++
             }
-            lastDate = getDaysOfMonth(lunarYear, lunarMonth)
+            lastDate = LunarUtil.getDaysOfMonth(lunarYear, lunarMonth)
         }
         year = lunarYear
         month = lunarMonth
@@ -5107,6 +5104,38 @@ class Lunar {
         return timeZhiIndex
     }
 
+    fun getDayGanIndex(): Int {
+        return dayGanIndex
+    }
+
+    fun getDayZhiIndex(): Int {
+        return dayZhiIndex
+    }
+
+    fun getMonthGanIndex(): Int {
+        return monthGanIndex
+    }
+
+    fun getMonthZhiIndex(): Int {
+        return monthZhiIndex
+    }
+
+    fun getYearGanIndex(): Int {
+        return yearGanIndex
+    }
+
+    fun getYearZhiIndex(): Int {
+        return yearZhiIndex
+    }
+
+    fun getYearGanIndexByLiChun(): Int {
+        return yearGanIndexByLiChun
+    }
+
+    fun getYearZhiIndexByLiChun(): Int {
+        return yearZhiIndexByLiChun
+    }
+
     fun getDayGanIndexExact(): Int {
         return dayGanIndexExact
     }
@@ -5149,11 +5178,11 @@ class Lunar {
         var m = month
         var d = day
         if (days > 0) {
-            var daysInMonth = getDaysOfMonth(y, m)
+            var daysInMonth = LunarUtil.getDaysOfMonth(y, m)
             var rest = day + days
             while (daysInMonth < rest) {
                 if (m > 0) {
-                    if (getLeapMonth(y) != m) {
+                    if (LunarUtil.getLeapMonth(y) != m) {
                         m++
                     } else {
                         m = -m
@@ -5166,7 +5195,7 @@ class Lunar {
                     m = 1
                 }
                 rest -= daysInMonth
-                daysInMonth = getDaysOfMonth(y, m)
+                daysInMonth = LunarUtil.getDaysOfMonth(y, m)
             }
             d = rest
         } else if (days < 0) {
@@ -5177,13 +5206,13 @@ class Lunar {
                     m--
                     if (0 == m) {
                         y--
-                        m = if (getLeapMonth(y) != 12) 12 else -12
+                        m = if (LunarUtil.getLeapMonth(y) != 12) 12 else -12
                     }
                 } else {
                     m = -m
                 }
                 rest -= daysInMonth
-                daysInMonth = getDaysOfMonth(y, m)
+                daysInMonth = LunarUtil.getDaysOfMonth(y, m)
             }
             d = daysInMonth - rest
         }
@@ -5315,7 +5344,7 @@ class Lunar {
      * @return 空亡(旬空)
      */
     fun getDayXunKongExact2(): String {
-        return getXunKong(getDayInGanZhiExact2())
+        return LunarUtil.getXunKong(getDayInGanZhiExact2())
     }
 
     /**
@@ -5332,6 +5361,105 @@ class Lunar {
      */
     fun getTimeXunKong(): String {
         return LunarUtil.getXunKong(getTimeInGanZhi())
+    }
+
+    /**
+     * 获取数九
+     * @return 数九，如果不是数九天，返回null
+     */
+    fun getShuJiu(): ShuJiu? {
+        val currentCalendar = Calendar.getInstance()
+        currentCalendar[solar.getYear(), solar.getMonth() - 1, solar.getDay(), 0, 0] = 0
+        currentCalendar[Calendar.MILLISECOND] = 0
+
+        var start = jieQi[JIE_QI_APPEND] ?: Solar()
+        val startCalendar = Calendar.getInstance()
+        startCalendar[start.getYear(), start.getMonth() - 1, start.getDay(), 0, 0] = 0
+        startCalendar[Calendar.MILLISECOND] = 0
+        if (currentCalendar < startCalendar) {
+            start = jieQi[JIE_QI_FIRST] ?: Solar()
+            startCalendar[start.getYear(), start.getMonth() - 1, start.getDay(), 0, 0] = 0
+        }
+
+        val endCalendar = Calendar.getInstance()
+        endCalendar[start.getYear(), start.getMonth() - 1, start.getDay(), 0, 0] = 0
+        endCalendar.add(Calendar.DATE, 81)
+        endCalendar[Calendar.MILLISECOND] = 0
+        if (currentCalendar < startCalendar || currentCalendar >= endCalendar) {
+            return null
+        }
+        val days =
+            ((currentCalendar.timeInMillis - startCalendar.timeInMillis) / (1000 * 60 * 60 * 24)).toInt()
+        return ShuJiu(LunarUtil.NUMBER[days / 9 + 1] + "九", days % 9 + 1)
+    }
+
+    /**
+     * 获取三伏
+     * @return 三伏，如果不是伏天，返回null
+     */
+    fun getFu(): Fu? {
+        val currentCalendar = Calendar.getInstance()
+        currentCalendar[solar.getYear(), solar.getMonth() - 1, solar.getDay(), 0, 0] = 0
+        currentCalendar[Calendar.MILLISECOND] = 0
+        val xiaZhi = jieQi["夏至"]
+        val liQiu = jieQi["立秋"]
+        val startCalendar = Calendar.getInstance()
+        startCalendar[xiaZhi!!.getYear(), xiaZhi.getMonth() - 1, xiaZhi.getDay(), 0, 0] = 0
+        startCalendar[Calendar.MILLISECOND] = 0
+
+        // 第1个庚日
+        var add = 6 - xiaZhi.getLunar().getDayGanIndex()
+        if (add < 0) {
+            add += 10
+        }
+        // 第3个庚日，即初伏第1天
+        add += 20
+        startCalendar.add(Calendar.DATE, add)
+
+        // 初伏以前
+        if (currentCalendar.compareTo(startCalendar) < 0) {
+            return null
+        }
+        var days =
+            ((currentCalendar.timeInMillis - startCalendar.timeInMillis) / (1000 * 60 * 60 * 24)).toInt()
+        if (days < 10) {
+            return Fu("初伏", days + 1)
+        }
+
+        // 第4个庚日，中伏第1天
+        startCalendar.add(Calendar.DATE, 10)
+        days =
+            ((currentCalendar.timeInMillis - startCalendar.timeInMillis) / (1000 * 60 * 60 * 24)).toInt()
+        if (days < 10) {
+            return Fu("中伏", days + 1)
+        }
+
+        // 第5个庚日，中伏第11天或末伏第1天
+        startCalendar.add(Calendar.DATE, 10)
+        val liQiuCalendar = Calendar.getInstance()
+        liQiuCalendar[liQiu!!.getYear(), liQiu.getMonth() - 1, liQiu.getDay(), 0, 0] = 0
+        liQiuCalendar[Calendar.MILLISECOND] = 0
+        days =
+            ((currentCalendar.timeInMillis - startCalendar.timeInMillis) / (1000 * 60 * 60 * 24)).toInt()
+        // 末伏
+        if (liQiuCalendar.compareTo(startCalendar) <= 0) {
+            if (days < 10) {
+                return Fu("末伏", days + 1)
+            }
+        } else {
+            // 中伏
+            if (days < 10) {
+                return Fu("中伏", days + 11)
+            }
+            // 末伏第1天
+            startCalendar.add(Calendar.DATE, 10)
+            days =
+                ((currentCalendar.timeInMillis - startCalendar.timeInMillis) / (1000 * 60 * 60 * 24)).toInt()
+            if (days < 10) {
+                return Fu("末伏", days + 1)
+            }
+        }
+        return null
     }
 
     fun toFullString(): String {

@@ -327,8 +327,8 @@ class Solar {
                         && dgz == dayGanZhi
                         && lunar.getTimeInGanZhi() == timeGanZhi
                     ) {
-                        l.add(solar);
-                        break;
+                        l.add(solar)
+                        break
                     }
                     solar = solar.next(1)
                     counter++
@@ -410,26 +410,24 @@ class Solar {
      */
     fun getXingZuo(): String {
         var index = 11
-        val m = month
-        val d = day
-        val y = m * 100 + d
+        val y = month * 100 + day
         if (y in 321..419) {
             index = 0
         } else if (y in 420..520) {
             index = 1
-        } else if (y in 521..620) {
+        } else if (y in 521..621) {
             index = 2
-        } else if (y in 621..722) {
+        } else if (y in 622..722) {
             index = 3
         } else if (y in 723..822) {
             index = 4
         } else if (y in 823..922) {
             index = 5
-        } else if (y in 923..1022) {
+        } else if (y in 923..1023) {
             index = 6
-        } else if (y in 1023..1121) {
+        } else if (y in 1024..1122) {
             index = 7
-        } else if (y in 1122..1221) {
+        } else if (y in 1123..1221) {
             index = 8
         } else if (y >= 1222 || y <= 119) {
             index = 9
