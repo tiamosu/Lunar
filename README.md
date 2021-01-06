@@ -5,7 +5,7 @@
 ## Download
 
 ```gradle
-implementation 'me.tiamosu:x-lunar:1.1.8'
+implementation 'me.tiamosu:x-lunar:1.1.9'
 ```
 
 ## *特别感谢*
