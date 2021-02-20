@@ -400,28 +400,28 @@ class Lunar {
         private const val MS_PER_DAY = 86400000L
 
         /** 节气表头部追加农历上年末的节气名(节令：大雪)，以示区分  */
-        private const val JIE_QI_PREPEND = "DA_XUE"
+        const val JIE_QI_PREPEND = "DA_XUE"
 
         /** 节气表尾部追加农历下年初的节气名(气令：冬至)，以示区分  */
-        private const val JIE_QI_APPEND = "DONG_ZHI"
-
-        /** 农历年初节气名(气令：冬至)  */
-        private const val JIE_QI_FIRST = "冬至"
-
-        /** 农历年末节气名(节令：大雪)  */
-        private const val JIE_QI_LAST = "大雪"
+        const val JIE_QI_APPEND = "DONG_ZHI"
 
         /** 节气表尾部追加阳历下年初的第一个节气名(节令：小寒)，以示区分  */
-        private const val JIE_APPEND_SOLAR_FIRST = "XIAO_HAN"
+        const val JIE_APPEND_SOLAR_FIRST = "XIAO_HAN"
 
         /** 节气表尾部追加阳历下年初的第二个节气名(气令：大寒)，以示区分  */
-        private const val QI_APPEND_SOLAR_SECOND = "DA_HAN"
+        const val QI_APPEND_SOLAR_SECOND = "DA_HAN"
+
+        /** 农历年末节气名(节令：大雪)  */
+        const val JIE_QI_LAST = "大雪"
+
+        /** 农历年初节气名(气令：冬至)  */
+        const val JIE_QI_FIRST = "冬至"
 
         /** 阳历下年初的第一个节气名(节令：小寒)  */
-        private const val JIE_SOLAR_FIRST = "小寒"
+        const val JIE_SOLAR_FIRST = "小寒"
 
         /** 阳历下年初的第二个节气名(气令：大寒)  */
-        private const val QI_SOLAR_SECOND = "大寒"
+        const val QI_SOLAR_SECOND = "大寒"
 
         /**
          * 通过指定阳历日期获取农历
