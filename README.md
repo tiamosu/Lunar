@@ -1,11 +1,20 @@
 # Lunar
 
-[ ![Download](https://api.bintray.com/packages/weixia/maven/x-lunar/images/download.svg) ](https://bintray.com/weixia/maven/x-lunar/_latestVersion)
-
 ## Download
+[![](https://jitpack.io/v/tiamosu/Lunar.svg)](https://jitpack.io/#tiamosu/Lunar)
 
-```gradle
-implementation 'me.tiamosu:x-lunar:1.2.1'
+```groovy
+allprojects {
+    repositories {
+        google()
+        jcenter()
+        maven { url 'https://jitpack.io' }
+    }
+}
+```
+
+``` groovy
+implementation 'com.github.tiamosu:Lunar:1.2.2'
 ```
 
 ## *特别感谢*
