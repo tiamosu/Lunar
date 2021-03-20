@@ -47,9 +47,13 @@ class EightChar(private var lunar: Lunar) {
         )
     }
 
-    override fun toString(): String {
-        return getYear() + " " + getMonth() + " " + getDay() + " " + getTime()
-    }
+    /**
+     * 流派，2晚子时日柱按当天，1晚子时日柱按明天，其他值默认为2
+     */
+    var sect = 2
+        set(value) {
+            field = if (1 == value) 1 else 2
+        }
 
     /**
      * 获取年柱
@@ -88,7 +92,7 @@ class EightChar(private var lunar: Lunar) {
      * @return 五行
      */
     fun getYearWuXing(): String {
-        return LunarUtil.WU_XING_GAN[lunar.getYearGanExact()] + LunarUtil.WU_XING_ZHI[lunar.getYearZhiExact()]
+        return LunarUtil.WU_XING_GAN[getYearGan()] + LunarUtil.WU_XING_ZHI[getYearZhi()]
     }
 
     /**
@@ -124,9 +128,27 @@ class EightChar(private var lunar: Lunar) {
         return getShiShenZhi(getYearZhi())
     }
 
+    /**
+     * 获取日干下标
+     *
+     * @return 日干下标，0-9
+     */
+    fun getDayGanIndex(): Int {
+        return if (2 == sect) lunar.getDayGanIndexExact2() else lunar.getDayGanIndexExact()
+    }
+
+    /**
+     * 获取日支下标
+     *
+     * @return 日支下标，0-11
+     */
+    fun getDayZhiIndex(): Int {
+        return if (2 == sect) lunar.getDayZhiIndexExact2() else lunar.getDayZhiIndexExact()
+    }
+
     private fun getDiShi(zhiIndex: Int): String {
         val offset = CHANG_SHENG_OFFSET[getDayGan()] ?: 0
-        var index = offset + if (lunar.getDayGanIndexExact() % 2 == 0) zhiIndex else -zhiIndex
+        var index = offset + if (getDayGanIndex() % 2 == 0) zhiIndex else -zhiIndex
         if (index >= 12) {
             index -= 12
         }
@@ -181,7 +203,7 @@ class EightChar(private var lunar: Lunar) {
      * @return 五行
      */
     fun getMonthWuXing(): String {
-        return LunarUtil.WU_XING_GAN[lunar.getMonthGanExact()] + LunarUtil.WU_XING_ZHI[lunar.getMonthZhiExact()]
+        return LunarUtil.WU_XING_GAN[getMonthGan()] + LunarUtil.WU_XING_ZHI[getMonthZhi()]
     }
 
     /**
@@ -221,7 +243,7 @@ class EightChar(private var lunar: Lunar) {
      * @return 日柱
      */
     fun getDay(): String {
-        return lunar.getDayInGanZhiExact()
+        return if (2 == sect) lunar.getDayInGanZhiExact2() else lunar.getDayInGanZhiExact()
     }
 
     /**
@@ -229,7 +251,7 @@ class EightChar(private var lunar: Lunar) {
      * @return 天干
      */
     fun getDayGan(): String {
-        return lunar.getDayGanExact()
+        return if (2 == sect) lunar.getDayGanExact2() else lunar.getDayGanExact()
     }
 
     /**
@@ -237,7 +259,7 @@ class EightChar(private var lunar: Lunar) {
      * @return 地支
      */
     fun getDayZhi(): String {
-        return lunar.getDayZhiExact()
+        return if (2 == sect) lunar.getDayZhiExact2() else lunar.getDayZhiExact()
     }
 
     /**
@@ -253,7 +275,7 @@ class EightChar(private var lunar: Lunar) {
      * @return 五行
      */
     fun getDayWuXing(): String {
-        return LunarUtil.WU_XING_GAN[lunar.getDayGanExact()] + LunarUtil.WU_XING_ZHI[lunar.getDayZhiExact()]
+        return LunarUtil.WU_XING_GAN[getDayGan()] + LunarUtil.WU_XING_ZHI[getDayZhi()]
     }
 
     /**
@@ -285,7 +307,7 @@ class EightChar(private var lunar: Lunar) {
      * @return 地势
      */
     fun getDayDiShi(): String {
-        return getDiShi(lunar.getDayZhiIndexExact())
+        return getDiShi(getDayZhiIndex())
     }
 
     /**
@@ -514,7 +536,7 @@ class EightChar(private var lunar: Lunar) {
      * @return 旬
      */
     fun getDayXun(): String {
-        return lunar.getDayXunExact()
+        return if (2 == sect) lunar.getDayXunExact2() else lunar.getDayXunExact()
     }
 
     /**
@@ -522,7 +544,7 @@ class EightChar(private var lunar: Lunar) {
      * @return 旬空(空亡)
      */
     fun getDayXunKong(): String {
-        return lunar.getDayXunKongExact()
+        return if (2 == sect) lunar.getDayXunKongExact2() else lunar.getDayXunKongExact()
     }
 
     /**
@@ -539,5 +561,9 @@ class EightChar(private var lunar: Lunar) {
      */
     fun getTimeXunKong(): String {
         return lunar.getTimeXunKong()
+    }
+
+    override fun toString(): String {
+        return getYear() + " " + getMonth() + " " + getDay() + " " + getTime()
     }
 }

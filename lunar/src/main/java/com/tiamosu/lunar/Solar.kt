@@ -230,7 +230,7 @@ class Solar {
     }
 
     /**
-     * 通过八字获取阳历列表
+     * 通过八字获取阳历列表（晚子时日柱按当天）
      * @param yearGanZhi 年柱
      * @param monthGanZhi 月柱
      * @param dayGanZhi 日柱
@@ -243,6 +243,25 @@ class Solar {
         dayGanZhi: String,
         timeGanZhi: String
     ): List<Solar> {
+        return fromBaZi(yearGanZhi, monthGanZhi, dayGanZhi, timeGanZhi, 2)
+    }
+
+    /**
+     * 通过八字获取阳历列表（晚子时日柱按当天）
+     * @param yearGanZhi 年柱
+     * @param monthGanZhi 月柱
+     * @param dayGanZhi 日柱
+     * @param timeGanZhi 时柱
+     * @return 符合的阳历列表
+     */
+    fun fromBaZi(
+        yearGanZhi: String,
+        monthGanZhi: String,
+        dayGanZhi: String,
+        timeGanZhi: String,
+        sect: Int
+    ): List<Solar> {
+        val newSect = if (1 == sect) 1 else 2
         val l: MutableList<Solar> = ArrayList()
         val today = Solar()
         var lunar = today.getLunar()
@@ -301,9 +320,11 @@ class Solar {
                 var solar = Solar(year, month, day, hour, 0, 0)
                 while (counter < 61) {
                     lunar = solar.getLunar()
+                    val dgz =
+                        if (2 == newSect) lunar.getDayInGanZhiExact2() else lunar.getDayInGanZhiExact()
                     if (lunar.getYearInGanZhiExact() == yearGanZhi
                         && lunar.getMonthInGanZhiExact() == monthGanZhi
-                        && lunar.getDayInGanZhiExact() == dayGanZhi
+                        && dgz == dayGanZhi
                         && lunar.getTimeInGanZhi() == timeGanZhi
                     ) {
                         l.add(solar)
@@ -389,26 +410,24 @@ class Solar {
      */
     fun getXingZuo(): String {
         var index = 11
-        val m = month
-        val d = day
-        val y = m * 100 + d
+        val y = month * 100 + day
         if (y in 321..419) {
             index = 0
         } else if (y in 420..520) {
             index = 1
-        } else if (y in 521..620) {
+        } else if (y in 521..621) {
             index = 2
-        } else if (y in 621..722) {
+        } else if (y in 622..722) {
             index = 3
         } else if (y in 723..822) {
             index = 4
         } else if (y in 823..922) {
             index = 5
-        } else if (y in 923..1022) {
+        } else if (y in 923..1023) {
             index = 6
-        } else if (y in 1023..1121) {
+        } else if (y in 1024..1122) {
             index = 7
-        } else if (y in 1122..1221) {
+        } else if (y in 1123..1221) {
             index = 8
         } else if (y >= 1222 || y <= 119) {
             index = 9
