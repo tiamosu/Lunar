@@ -25,4 +25,6 @@ android {
     }
 }
 
-apply from: 'bintray.gradle'
+dependencies {
+    api "cn.6tail:lunar:1.2.1"
+}
