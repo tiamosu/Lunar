@@ -1,1 +1,1 @@
--keep class com.tiamosu.lunar.** {*;}
+-keep class com.nlf.calendar.** {*;}

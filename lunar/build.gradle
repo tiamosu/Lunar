@@ -1,16 +1,18 @@
 apply {
     plugin "com.android.library"
     plugin "kotlin-android"
+    plugin "kotlin-parcelize"
+    plugin "kotlin-kapt"
 }
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion "30.0.3"
+    compileSdkVersion Android.compileSdkVersion
     defaultConfig {
-        minSdkVersion 15
-        targetSdkVersion 30
-        versionCode 1
-        versionName "1.0"
+        minSdkVersion Android.minSdkVersion
+        targetSdkVersion Android.targetSdkVersion
+        versionCode Android.versionCode
+        versionName Android.versionName
+
         consumerProguardFiles "consumer-rules.pro"
     }
     buildTypes {
@@ -20,11 +22,20 @@ android {
         }
     }
     lintOptions {
+        checkReleaseBuilds false
         abortOnError false
-        warning 'InvalidPackage'
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = "1.8"
     }
 }
 
 dependencies {
-    api "cn.6tail:lunar:1.2.1"
+    api Deps.lunar
 }
+
+apply from: "${rootDir.path}/config_publish.gradle"

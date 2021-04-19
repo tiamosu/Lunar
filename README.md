@@ -14,7 +14,7 @@ allprojects {
 ```
 
 ``` groovy
-implementation 'com.github.tiamosu:Lunar:1.2.2'
+implementation 'com.github.tiamosu:Lunar:1.2.3'
 ```
 
 ## *特别感谢*
