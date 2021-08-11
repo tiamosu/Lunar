@@ -7,14 +7,13 @@
 allprojects {
     repositories {
         google()
-        jcenter()
-        maven { url 'https://jitpack.io' }
+        mavenCentral()
     }
 }
 ```
 
 ``` groovy
-implementation 'com.github.tiamosu:Lunar:1.2.3'
+implementation 'com.github.tiamosu:Lunar:1.2.4'
 ```
 
 ## *特别感谢*
