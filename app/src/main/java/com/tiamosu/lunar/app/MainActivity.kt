@@ -3,8 +3,7 @@ package com.tiamosu.lunar.app
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.tiamosu.lunar.Lunar
-import com.tiamosu.lunar.Solar
+import com.nlf.calendar.Solar
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -14,32 +13,28 @@ class MainActivity : AppCompatActivity() {
         var solar = Solar()
         Log.e("xia", "solar:" + solar.toFullString())
 
-        val lunar = solar.getLunar()
+        val lunar = solar.lunar
         Log.e("xia", "lunar:" + lunar.toFullString())
 
         Log.e("xia", "eightChar:" + lunar.eightChar)
 
         solar = Solar.fromYmd(2020, 6, 21)
-        Log.e("xia", "${solar.getFestivals()}")
+        Log.e("xia", "${solar.festivals}")
 
         solar = Solar.fromYmd(2020, 11, 26)
-        Log.e("xia", "${solar.getFestivals()}")
+        Log.e("xia", "${solar.festivals}")
 
         solar = Solar.fromYmd(2021, 5, 9)
-        Log.e("xia", "${solar.getFestivals()}")
+        Log.e("xia", "${solar.festivals}")
 
-        val jieQiTable = lunar.getJieQiTable()
+        val jieQiTable = lunar.jieQiTable
         Log.e("xia", "节气:$jieQiTable")
 
         val jieQiArray = arrayListOf<String>()
         jieQiTable.forEach { (t, u) ->
-            var key = t
-            if (key == Lunar.JIE_QI_APPEND) {
-                key = Lunar.JIE_QI_FIRST
-            }
             val value = u.toString().replace("-", "")
-            if (value.startsWith(solar.getYear().toString())) {
-                val jieQi = "$value$key"
+            if (value.startsWith(solar.year.toString())) {
+                val jieQi = "$value$t"
                 jieQiArray.add(jieQi)
             }
         }
