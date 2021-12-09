@@ -1,20 +1,24 @@
 # Lunar
 
 ## Download
-[![](https://jitpack.io/v/tiamosu/Lunar.svg)](https://jitpack.io/#tiamosu/Lunar)
 
 ```groovy
 allprojects {
     repositories {
         google()
         mavenCentral()
+
+        //或者 sonatype
+        maven { url "https://s01.oss.sonatype.org/content/groups/public" }
+        maven { url "https://s01.oss.sonatype.org/content/repositories/releases" }
     }
 }
 ```
 
 ``` groovy
-implementation 'com.github.tiamosu:Lunar:1.2.7'
+implementation 'com.gitee.tiamosu:lunar:2.0.0'
 ```
 
 ## *特别感谢*
+
 [lunar-java](https://github.com/6tail/lunar-java)
