@@ -1,23 +1,19 @@
 @file:Suppress("unused", "SpellCheckingInspection")
 
 object Android {
-    const val compileSdkVersion = 30
-    const val minSdkVersion = 15
-    const val targetSdkVersion = 30
+    const val compileSdk = 31
+    const val minSdk = 21
+    const val targetSdk = 30
 
     const val versionName = "1.0"
     const val versionCode = 1
 }
 
 object Versions {
-    const val kotlin = "1.4.32"
-    const val appcompat = "1.3.1"
-    const val constraintlayout = "2.1.1"
-    const val lunar = "1.2.9"
-}
-
-object Publish {
-    const val groupId = "com.github.tiamosu"
+    const val kotlin = "1.6.0"
+    const val appcompat = "1.4.0"
+    const val constraintlayout = "2.1.2"
+    const val lunar = "1.2.14"
 }
 
 object Deps {
