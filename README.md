@@ -16,7 +16,7 @@ allprojects {
 ```
 
 ``` groovy
-implementation 'com.gitee.tiamosu:lunar:2.0.0'
+implementation 'com.gitee.tiamosu:lunar:2.0.1'
 ```
 
 ## *特别感谢*
