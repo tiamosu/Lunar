@@ -13,7 +13,7 @@ object Versions {
     const val kotlin = "1.6.10"
     const val appcompat = "1.4.0"
     const val constraintlayout = "2.1.2"
-    const val lunar = "1.2.16"
+    const val lunar = "1.2.18"
 }
 
 object Deps {
