@@ -10,15 +10,12 @@ object Android {
 }
 
 object Versions {
-    const val kotlin = "1.6.10"
-    const val appcompat = "1.4.1"
-    const val constraintlayout = "2.1.3"
-    const val lunar = "1.2.20"
+    const val kotlin = "1.6.21"
+    const val lunar = "1.2.22"
 }
 
 object Deps {
-    const val appcompat = "androidx.appcompat:appcompat:${Versions.appcompat}"
-    const val constraintlayout =
-        "androidx.constraintlayout:constraintlayout:${Versions.constraintlayout}"
+    const val appcompat = "androidx.appcompat:appcompat:1.4.1"
+    const val constraintlayout = "androidx.constraintlayout:constraintlayout:2.1.3"
     const val lunar = "cn.6tail:lunar:${Versions.lunar}"
 }
