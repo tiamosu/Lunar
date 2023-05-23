@@ -11,7 +11,7 @@ object Android {
 
 object Versions {
     const val kotlin = "1.7.10"
-    const val lunar = "1.2.26"
+    const val lunar = "1.6.3"
 }
 
 object Deps {
